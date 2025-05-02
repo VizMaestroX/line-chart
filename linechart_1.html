@@ -6,11 +6,11 @@
     <title>Chart with Reordered Controls</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <style>
-        body {
-    margin:0;
-    padding:0;
-    background-color:#f8f8f8;
-    font-family: 'Segoe UI',sans-serif;
+    body {
+        margin:0;
+        padding:0;
+        background-color:#f8f8f8;
+        font-family: 'Segoe UI',sans-serif;
     }
     /* Layout Containers */
     .outer-container {
@@ -70,6 +70,9 @@
         cursor:pointer;
         vertical-align:middle;
         margin-left:4px;
+    }
+    .info-icon svg {
+        display: block;
     }
     .tooltip-box {
         position:absolute;
@@ -214,55 +217,70 @@
     .checkbox-container label {
         user-select: none;
     }
-    /* Flatpickr Calendar Styling */
     .flatpickr-calendar {
         font-family:'NotoSansKR',sans-serif;
-        font-size:11px;
+        font-size: 10px; 
         border:1px solid #ccc;
         border-radius:6px;
         box-shadow:0 2px 8px rgba(0,0,0,0.15);
-        width:auto;
+        width: 260px; 
     }
-    .flatpickr-day,.flatpickr-months,.flatpickr-weekday {
-        font-size:13px;
+
+    .flatpickr-day, .flatpickr-months .flatpickr-month, .flatpickr-weekday { 
+        font-size: 11px; 
+        height: 26px; 
+        line-height: 26px; 
     }
+
+    .flatpickr-months .flatpickr-month { 
+        height: 28px; 
+        line-height: 28px; 
+    }
+
+    .flatpickr-weekdays { 
+        height: 24px; 
+    }
+
+    .flatpickr-weekday { 
+        line-height: 20px; 
+    }
+
     .flatpickr-footer {
         display:flex;
         justify-content:space-between;
-        padding:6px 10px;
-        font-size:12px;
+        padding: 4px 8px; 
+        font-size: 10px; 
         border-top:1px solid #eee;
     }
+
     .flatpickr-footer button {
         background:none;
         border:none;
         padding:2px 4px;
         cursor:pointer;
         color:#007bff;
+        font-size: 10px;
     }
+
     .flatpickr-footer button:hover {
         text-decoration:underline;
     }
-    .flatpickr-prev-month,.flatpickr-next-month {
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        position:relative;
-    }
-    .flatpickr-prev-month {
-        position:relative;
-        order:1;
-        margin-right:8px;
-    }
-    .flatpickr-next-month {
-        position:relative;
-        order:3;
-        margin-left:8px;
-    }
-    .flatpickr-current-month {
-        order: 2;
+
+    .flatpickr-prev-month, .flatpickr-next-month {
+        height: 28px; 
     }
 
+    .flatpickr-prev-month svg, .flatpickr-next-month svg {
+        width: 12px;
+        height: 12px;
+    }
+
+    .flatpickr-current-month .flatpickr-monthDropdown-months,
+    .flatpickr-current-month .numInputWrapper input.numInput {
+        font-size: 11px;
+    }
+
+    
     </style>
 </head>
 <body lang="ko">
