@@ -341,10 +341,8 @@
     const rawData = [
         [10, 25, 40, 30, 50, 20, 60, 35, 70, 55],
         [90, 60, 70, 40, 80, 20, 30, 10, 5, 0],
-        [30, 80, 50, 90, 70, 100, 60, 40, 20, 10],
-        [5, 15, 25, 55, 45, 75, 65, 85, 95, 100]
+        [30, 80, 50, 90, 70, 100, 60, 40, 20, 10]
     ];
-
     document.addEventListener('DOMContentLoaded', function() {
         const commonFlatpickrOptions = {
             locale: 'ko',
@@ -515,6 +513,7 @@
                     x: -5
                 }
             },
+     
             legend: {
                 align: 'center',
                 verticalAlign: 'bottom',
@@ -589,10 +588,11 @@
                     }
                 }
             },
-            series: rawData.map((d, i) => ({
-                name: `시리즈 ${i + 1}`,
-                data: d
-            }))
+            series: [
+              { name: '대기업', data: rawData[0] },
+              { name: '중견기업', data: rawData[1] },
+              { name: '중소기업', data: rawData[2] }
+           ]
         });
 
         document.querySelectorAll('.segmented-control button').forEach(b => b.addEventListener('click', () => {
