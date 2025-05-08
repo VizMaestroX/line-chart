@@ -469,11 +469,11 @@
                 enabled: false,
                 fallbackToExportServer: false
             },
-           tooltip: {
+          tooltip: {
   shared: true,
   formatter: function () {
     const categories = this.series.chart.xAxis[0].categories;
-    const label = categories[this.points[0].x];  // x 인덱스로 라벨 얻기
+    const label = categories[this.points[0].x];
 
     const points = this.points;
     const total = points.reduce((sum, p) => sum + p.y, 0);
@@ -481,10 +481,12 @@
 
     points.forEach(p => {
       const percent = total > 0 ? ((p.y / total) * 100).toFixed(1) : '0.0';
-      s += `<span style="color:${p.color}">●</span> ${p.series.name}: <b>${p.y}</b> (${percent}%)<br/>`;
+      s += `
+        <span style="font-size:6px; color:${p.color}; vertical-align:middle; line-height:1;">●</span>
+        <span style="font-size:10px;"> ${p.series.name}: <b>${p.y}</b> (${percent}%)</span><br/>
+      `;
     });
 
-    s += `<b>합계: ${total}</b>`;
     return s;
   }
 },
