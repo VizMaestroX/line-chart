@@ -287,13 +287,13 @@
     <div class="outer-container">
         <div class="chart-header">
             <img id="favorite-toggle" class="favorite-toggle inactive" src="https://i.postimg.cc/PJMYK8Zf/non-fav.png" width="17" height="17" alt="즐겨찾기" style="margin-top: 3px;"/>
-            <h2 class="chart-title">자기자본이익률(ROE)</h2>
+            <h2 class="chart-title">기업 규모별 매출</h2>
             <div class="info-icon">
                 <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="10"></circle><path d="M9 9a3 3 0 1 1 6 0c0 1.5-3 2-3 4"></path><circle cx="12" cy="17" r="1"></circle>
                 </svg>
                 <div class="tooltip-box">
-                    이 그래프는 기업이 자본을 얼마나 효율적으로 활용해 수익을 창출했는지를 보여주는 자기자본이익률(ROE)을 나타냅니다. ROE는 기업의 수익성 및 자본 효율성을 평가하는 중요한 지표로, 기업의 성과가 얼마나 효과적으로 이루어졌는지를 시각적으로 분석할 수 있습니다.
+                  이 그래프는 기업의 규모(대기업, 중견기업, 중소기업)에 따라 월별 매출 수준을 비교한 것입니다. 각 막대는 동일한 시점에서 규모별 매출 차이를 시각적으로 보여줍니다.
                     <br><br>
                     <div class="annotation">주 : 1) 자료는 계절조정치 기준</div>
                     <div class="source">자료: 통계청</div>
@@ -337,12 +337,12 @@
     <script>
     let chart;
     let startPicker, endPicker;
-    const monthlyCategories = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월'];
+    const monthlyCategories = ['4월', '5월', '6월', '7월', '8월', '9월'];
     const rawData = [
-        [10, 25, 40, 30, 50, 20, 60, 35, 70, 55],
-        [90, 60, 70, 40, 80, 20, 30, 10, 5, 0],
-        [30, 80, 50, 90, 70, 100, 60, 40, 20, 10]
-    ];
+       [85, 91, 88, 94, 97, 90], 
+  [52, 48, 55, 60, 58, 53], 
+  [34, 30, 36, 38, 35, 32]  
+];
     document.addEventListener('DOMContentLoaded', function() {
         const commonFlatpickrOptions = {
             locale: 'ko',
