@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chart with Reordered Controls</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+    body {
+        margin:0;
+        padding:0;
+        background-color:#f8f8f8;
+        font-family: 'Segoe UI',sans-serif;
+    }
+    /* Layout Containers */
+    .outer-container {
+        border:2px solid #e0e0e0;
+        border-radius:8px;
+        background:#f8f8f8;
+        width:fit-content;
+        margin:40px auto;
+        padding:10px 0;
+        box-sizing:border-box;
+        position:relative;
+    }
+    .chart-header {
+        display:flex;
+        align-items:center;
+        margin-bottom:15px;
+        margin-left:15px;
+        position:relative;
+    }
+    .chart-container {
+        border-top:2px solid #333;
+        width:491.992px;
+        /* Consider using relative units like % or vw */ height:506.133px;
+        background:#f8f8f8;
+        border-radius:0;
+        margin:0 auto;
+        padding:40px 15px 10px 5px;
+        box-sizing:border-box;
+        transition:width 0.3s ease,height 0.3s ease;
+        position:relative;
+    }
+    .chart-container.fullscreen {
+        width:90vw;
+        height:70vh;
+        /* Example using viewport units */ padding:40px 20px 20px 20px;
+    }
+    #chart-area {
+        height: calc(100% - 40px);
+        width: 100%;
+    }
+    /* Target for Highcharts */
+    /* Header Elements */
+    .chart-title {
+        user-select:none;
+        font-size:17px;
+        font-weight:bold;
+        color:#333;
+        margin:0;
+    }
+    .favorite-toggle {
+        cursor:pointer;
+        margin-right: 5px; /* 별 아이콘과 제목 사이 간격 추가 */
+    }
+    .info-icon {
+        position:relative;
+        display:inline-block;
+        cursor:pointer;
+        vertical-align:middle;
+        margin-left:4px;
+    }
+    .info-icon svg {
+        display: block;
+    }
+    .tooltip-box {
+        position:absolute;
+        background-color:#ffffff;
+        border:1px solid #ccc;
+        border-radius:4px;
+        padding:8px 12px;
+        font-size:11px;
+        color:#333;
+        white-space:normal;
+        word-break:break-word;
+        overflow-wrap:break-word;
+        max-width:320px;
+        width:320px;
+        box-shadow:0 2px 4px rgba(0,0,0,0.1);
+        z-index:10;
+        opacity:0;
+        pointer-events:none;
+        transition:opacity 0.2s ease-in-out;
+        top:25px;
+        left:0;
+        transform:translateX(-40%);
+    }
+    .info-icon .tooltip-box .annotation,.info-icon .tooltip-box .source {
+        font-size:10px;
+        color:#666;
+        margin-top:5px;
+    }
+    .info-icon:hover .tooltip-box {
+        opacity:1;
+        pointer-events: auto;
+    }
+    /* Header Buttons */
+    .fullscreen-toggle,.download-png,.print-screen {
+        position:absolute;
+        top:0;
+        width:28px;
+        height:28px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        cursor:pointer;
+        border:none;
+        background:transparent;
+        padding:0;
+    }
+    .fullscreen-toggle {
+        right:85px;
+    }
+    .print-screen { /* 순서 변경: 인쇄 버튼 */
+        right:50px;
+    }
+    .download-png { /* 순서 변경: 다운로드 버튼 */
+        right:15px;
+    }
+    .fullscreen-toggle img,.download-png img,.print-screen img {
+        max-width:100%;
+        max-height:100%;
+        width:100%;
+        height:100%;
+        border-radius:4px;
+        object-fit:cover;
+    }
+    .fullscreen-toggle:hover img,.download-png:hover img,.print-screen:hover img {
+        opacity: 0.9;
+    }
+    /* Chart Controls Area */
+    .chart-controls {
+        display:flex;
+        align-items:center;
+        gap:8px;
+        margin-bottom:15px;
+        margin-top:-25px;
+        padding-left:5px;
+        /* Align controls with chart padding */
+    }
+    .chart-container.fullscreen .chart-controls {
+        justify-content:flex-start;
+    }
+    .chart-container.fullscreen .checkbox-container {
+        margin-left:auto;
+        padding-right:5px;
+    }
+    .chart-container.fullscreen .segmented-control {
+        margin-right: 0;
+    }
+    /* Segmented Control */
+    .segmented-control {
+        display:flex;
+        gap:4px;
+        width:110px;
+    }
+    .segmented-control button {
+        flex:1;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        border:1px solid #ccc;
+        background:#fff;
+        padding:0 1px;
+        font-size:12px;
+        cursor:pointer;
+        border-radius:3px;
+        height:22px;
+    }
+    .segmented-control button.active {
+        background-color: #e0e0e0;
+    }
+    /* Date Range Input Area */
+    .date-range-container {
+        display:flex;
+        align-items:center;
+        gap:6px;
+    }
+    .date-range-container span {
+        font-size:12px;
+        color:#333;
+    }
+    .time-selector {
+        font-size: 12px;
+        padding: 4px 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        background: #fff;
+        cursor: pointer;
+        width: 74px;
+    }
+    /* Checkbox */
+    .checkbox-container {
+        display:flex;
+        align-items:center;
+        font-size:12px;
+        color:#333;
+        margin-left:8px;
+    }
+    .checkbox-container input[type="checkbox"] {
+        margin-right:4px;
+        width:22px;
+        height:22px;
+        cursor:pointer;
+    }
+    .checkbox-container label {
+        user-select: none;
+    }
+    .flatpickr-calendar {
+        font-family:'NotoSansKR',sans-serif;
+        font-size: 10px; 
+        border:1px solid #ccc;
+        border-radius:6px;
+        box-shadow:0 2px 8px rgba(0,0,0,0.15);
+        width: 260px; 
+    }
+
+    .flatpickr-day, .flatpickr-months .flatpickr-month, .flatpickr-weekday { 
+        font-size: 11px; 
+        height: 26px; 
+        line-height: 26px; 
+    }
+
+    .flatpickr-months .flatpickr-month { 
+        height: 28px; 
+        line-height: 28px; 
+    }
+
+    .flatpickr-weekdays { 
+        height: 24px; 
+    }
+
+    .flatpickr-weekday { 
+        line-height: 20px; 
+    }
+
+    .flatpickr-footer {
+        display:flex;
+        justify-content:space-between;
+        padding: 4px 8px; 
+        font-size: 10px; 
+        border-top:1px solid #eee;
+    }
+
+    .flatpickr-footer button {
+        background:none;
+        border:none;
+        padding:2px 4px;
+        cursor:pointer;
+        color:#007bff;
+        font-size: 10px;
+    }
+
+    .flatpickr-footer button:hover {
+        text-decoration:underline;
+    }
+
+    .flatpickr-prev-month, .flatpickr-next-month {
+        height: 28px; 
+    }
+
+    .flatpickr-prev-month svg, .flatpickr-next-month svg {
+        width: 12px;
+        height: 12px;
+    }
+
+    .flatpickr-current-month .flatpickr-monthDropdown-months,
+    .flatpickr-current-month .numInputWrapper input.numInput {
+        font-size: 11px;
+    }
+
+    
+    </style>
+</head>
+<body lang="ko">
+    <div class="outer-container">
+        <div class="chart-header">
+            <img id="favorite-toggle" class="favorite-toggle inactive" src="https://i.postimg.cc/PJMYK8Zf/non-fav.png" width="17" height="17" alt="즐겨찾기" style="margin-top: 3px;"/>
+            <h2 class="chart-title">기업 규모별 매출</h2>
+            <div class="info-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle><path d="M9 9a3 3 0 1 1 6 0c0 1.5-3 2-3 4"></path><circle cx="12" cy="17" r="1"></circle>
+                </svg>
+                <div class="tooltip-box">
+                  이 그래프는 기업의 규모(대기업, 중견기업, 중소기업)에 따라 월별 매출 수준을 비교한 것입니다. 각 막대는 동일한 시점에서 규모별 매출 차이를 시각적으로 보여줍니다.
+                    <br><br>
+                    <div class="annotation">주 : 1) 자료는 계절조정치 기준</div>
+                    <div class="source">자료: 통계청</div>
+                </div>
+            </div>
+            <button id="fullscreen-toggle" class="fullscreen-toggle" title="그래프 확대">
+                <img src="https://i.postimg.cc/xjbMR8GG/full-screen-interface-symbol-of-four-arrows-in-square-button.png" alt="Fullscreen Icon">
+            </button>
+            <button id="print-screen" class="print-screen" title="화면 인쇄"> <img src="https://i.postimg.cc/QNkvHLbQ/unnamed.png" alt="Print Screen">
+            </button>
+            <button id="download-png" class="download-png" title="이미지 저장"> <img src="https://i.postimg.cc/J0g8JsFt/print.png" alt="Download PNG">
+            </button>
+        </div>
+        <div class="chart-container">
+            <div class="chart-controls">
+                <div class="segmented-control">
+                    <button class="active">월</button><button>분기</button><button>년</button>
+                </div>
+                <div class="date-range-container">
+                    <input class="time-selector" id="start-date" placeholder="시작일">
+                    <span>~</span>
+                    <input class="time-selector" id="end-date" placeholder="종료일">
+                </div>
+                <div class="checkbox-container">
+                    <input type="checkbox" id="moving-average-checkbox">
+                    <label for="moving-average-checkbox">3기간 이동평균</label>
+                </div>
+            </div>
+            <div id="chart-area"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ko.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/cleave.js@1.6.0/dist/cleave.min.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/offline-exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/no-data-to-display.js"></script>
+
+    <script>
+    let chart;
+    let startPicker, endPicker;
+    const monthlyCategories = ['4월', '5월', '6월', '7월', '8월', '9월'];
+    const rawData = [
+       [85, 91, 88, 94, 97, 90], 
+  [52, 48, 55, 60, 58, 53], 
+  [34, 30, 36, 38, 35, 32]  
+];
+    document.addEventListener('DOMContentLoaded', function() {
+        const commonFlatpickrOptions = {
+            locale: 'ko',
+            dateFormat: 'Y-m-d',
+            allowInput: true,
+            monthSelectorType: 'static',
+            prevArrow: '▲',
+            nextArrow: '▼',
+            onReady: function(_, __, fp) {
+                const footer = document.createElement('div');
+                footer.className = 'flatpickr-footer';
+                const btnClear = document.createElement('button');
+                btnClear.textContent = '삭제';
+                btnClear.type = 'button';
+                btnClear.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    fp.clear();
+                    fp.close();
+                });
+                const btnToday = document.createElement('button');
+                btnToday.textContent = '오늘';
+                btnToday.type = 'button';
+                btnToday.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    fp.setDate(new Date(), true);
+                    fp.close();
+                });
+                footer.appendChild(btnClear);
+                footer.appendChild(btnToday);
+                fp.calendarContainer.appendChild(footer);
+            },
+            onClose: function(selectedDates, dateStr, instance) {
+                const targetFormat = instance.config.dateFormat;
+                const parsed = instance.parseDate(dateStr, targetFormat);
+                if (parsed instanceof Date && !isNaN(parsed)) {
+                    instance.setDate(parsed, true, targetFormat);
+                } else if (dateStr.trim() !== '') {
+                    instance.clear();
+                }
+            }
+        };
+
+        startPicker = flatpickr('#start-date', {
+            ...commonFlatpickrOptions,
+            onChange(selectedDates, dateStr, instance) {
+                if (selectedDates.length > 0) {
+                    endPicker.set('minDate', selectedDates[0]);
+                    if (endPicker.selectedDates.length > 0 && endPicker.selectedDates[0] < selectedDates[0]) {
+                        endPicker.setDate(selectedDates[0], true);
+                    } else {
+                        updateChart();
+                    }
+                } else {
+                    endPicker.set('minDate', null);
+                    updateChart();
+                }
+            }
+        });
+
+        endPicker = flatpickr('#end-date', {
+            ...commonFlatpickrOptions,
+            onChange(selectedDates, dateStr, instance) {
+                if (selectedDates.length > 0) {
+                    startPicker.set('maxDate', selectedDates[0]);
+                    if (startPicker.selectedDates.length > 0 && startPicker.selectedDates[0] > selectedDates[0]) {
+                        startPicker.setDate(selectedDates[0], true);
+                    } else {
+                        updateChart();
+                    }
+                } else {
+                    startPicker.set('maxDate', null);
+                    updateChart();
+                }
+            }
+        });
+
+        ['#start-date', '#end-date'].forEach(selector => {
+            const element = document.querySelector(selector);
+            if (element) {
+                new Cleave(element, {
+                    date: true,
+                    delimiter: '-',
+                    datePattern: ['Y', 'm', 'd']
+                });
+            }
+        });
+
+        const favBtn = document.getElementById('favorite-toggle');
+        let isActive = false;
+
+        favBtn.addEventListener('click', () => {
+            isActive = !isActive;
+            if (isActive) {
+                favBtn.src = 'https://i.postimg.cc/90PtSk3h/fav.png'; // 채워진 노란별
+                favBtn.classList.remove('inactive');
+                favBtn.classList.add('active');
+            } else {
+                favBtn.src = 'https://i.postimg.cc/PJMYK8Zf/non-fav.png'; // 회색 별
+                favBtn.classList.remove('active');
+                favBtn.classList.add('inactive');
+            }
+        });
+        const chartDom = document.querySelector('.chart-container');
+        document.getElementById('fullscreen-toggle').addEventListener('click', function() {
+            chartDom.classList.toggle('fullscreen');
+            if (chart) {
+                setTimeout(() => chart.reflow(), 0); // reflow after transition might be better
+            }
+        });
+
+        chart = Highcharts.chart('chart-area', {
+            chart: {
+                type: 'column',
+                backgroundColor: '#f8f8f8',
+                spacing: [30, 15, 20, -30],
+            },
+            title: {
+                text: null
+            },
+            credits: {
+                enabled: false
+            },
+            exporting: {
+                enabled: false,
+                fallbackToExportServer: false
+            },
+           tooltip: {
+  shared: true,
+  formatter: function () {
+    const categories = this.series.chart.xAxis[0].categories;
+    const label = categories[this.points[0].x];  // x 인덱스로 라벨 얻기
+
+    const points = this.points;
+    const total = points.reduce((sum, p) => sum + p.y, 0);
+    let s = `<b>${label}</b><br/>`;
+
+    points.forEach(p => {
+      const percent = total > 0 ? ((p.y / total) * 100).toFixed(1) : '0.0';
+      s += `<span style="color:${p.color}">●</span> ${p.series.name}: <b>${p.y}</b> (${percent}%)<br/>`;
+    });
+
+    s += `<b>합계: ${total}</b>`;
+    return s;
+  }
+},
+            xAxis: {
+                categories: monthlyCategories,
+                tickPosition: 'inside',
+                tickLength: 5,
+                lineColor: '#B8B8B8',
+                lineWidth: 1,
+                tickColor: '#B8B8B8',
+                tickWidth: 1,
+                gridLineWidth: 0,
+                tickmarkPlacement: 'on',
+                labels: {
+                    y: 13
+                }
+            },
+            yAxis: {
+                ignoreHiddenSeries: false,
+                offset: 0,
+                tickPosition: 'inside',
+                tickLength: 5,
+                lineColor: '#B8B8B8',
+                lineWidth: 1,
+                tickColor: '#B8B8B8',
+                tickWidth: 1,
+                gridLineWidth: 0,
+                title: {
+                    text: '(백만원)', // 초기 텍스트 설정
+                    align: 'high',
+                    rotation: 0,
+                    y: -7,
+                    x: 75,
+                    style: {
+                        fontSize: '11px',
+                        fontWeight: 'normal',
+                        color: '#333',
+                        opacity: 1 // 초기 투명도 (불투명)
+                    }
+                },
+                labels: {
+                    x: -5
+                }
+            },
+     
+            legend: {
+                align: 'center',
+                verticalAlign: 'bottom',
+                layout: 'horizontal',
+                itemMarginBottom: 5,
+                x: 33,
+                y: 30
+            },
+            plotOptions: {
+                series: {
+                    states: {
+                        inactive: {
+                            opacity: 0.2
+                        },
+                        hover: {
+                            lineWidthPlus: 2
+                        }
+                    },
+                    marker: {
+                        enabled: true,
+                        states: {
+                            hover: {
+                                enabled: true,
+                                radius: 6
+                            }
+                        }
+                    },
+                    events: {
+                        mouseOver() {
+                            const c = this.chart;
+                            c.series.forEach(s => {
+                                if (s !== this && s.visible) { // 보이는 시리즈에만 적용
+                                    s.group.attr({ opacity: 0.2 });
+                                    s.markerGroup && s.markerGroup.attr({ opacity: 0.2 });
+                                }
+                            });
+                        },
+                        mouseOut() {
+                            const c = this.chart;
+                            c.series.forEach(s => {
+                                s.group.attr({ opacity: 1 });
+                                s.markerGroup && s.markerGroup.attr({ opacity: 1 });
+                            });
+                        },
+                        // legendItemClick 이벤트를 수정합니다.
+                        legendItemClick: function() {
+                            const clickedSeries = this;
+                            const chart = this.chart;
+                            setTimeout(() => {
+                                let anySeriesVisible = false;
+                                chart.series.forEach(s => {
+                                    // 현재 실제 가시성을 확인합니다.
+                                    if (s.visible) {
+                                        anySeriesVisible = true;
+                                    }
+                                });
+
+                                // Y축 제목 업데이트
+                                const originalTitleColor = chart.options.yAxis[0]?.title?.style?.color || '#333'; // 원래 색상 가져오기
+                                chart.yAxis[0].update({
+                                    title: {
+                                        style: {
+                                            // opacity 를 1 또는 0으로 설정하여 숨김/표시
+                                            opacity: anySeriesVisible ? 1 : 0
+                                        }
+                                    }
+                                }, true); // 즉시 다시 그리도록 true 설정
+
+                            }, 0); // 0ms 지연으로 현재 실행 스택 이후에 실행
+                            return true;
+                        }
+                    }
+            },
+               column: {
+                 stacking: 'normal'
+               }
+           },
+            series: [
+              { name: '대기업', data: rawData[0] },
+              { name: '중견기업', data: rawData[1] },
+              { name: '중소기업', data: rawData[2] }
+           ]
+        });
+
+        document.querySelectorAll('.segmented-control button').forEach(b => b.addEventListener('click', () => {
+            document.querySelectorAll('.segmented-control button').forEach(x => x.classList.remove('active'));
+            b.classList.add('active');
+            updateChart();
+        }));
+        document.getElementById('moving-average-checkbox').addEventListener('change', updateChart);
+
+        document.getElementById('download-png').addEventListener('click', () => {
+            if (chart) {
+                chart.exportChartLocal({
+                    type: 'image/png',
+                    filename: 'chart'
+                });
+            }
+        });
+        document.getElementById('print-screen').addEventListener('click', () => {
+            window.print();
+        });
+    });
+
+    function aggregate(data, period) {
+        if (period === '월') {
+            return data.slice();
+        }
+        if (period === '분기') {
+            const qs = [];
+            for (let i = 0; i < data.length; i += 3) {
+                qs.push(data.slice(i, Math.min(i + 3, data.length)).reduce((a, b) => a + b, 0));
+            }
+            while (qs.length < 4) {
+                qs.push(null);
+            }
+            return qs.slice(0, 4);
+        }
+        if (period === '년') {
+            const numYears = chart.xAxis[0].categories.length; // 년도 카테고리 수
+            const annualValue = data.length > 0 ? data.reduce((a, b) => a + b, 0) / data.length : null; // 전체 평균으로 대체 또는 첫 값 사용 data[0]
+            return Array(numYears).fill(annualValue); // 모든 년도에 동일 값 적용 (예시)
+        }
+        return data;
+    }
+
+
+    function updateChart() {
+        if (!startPicker || !endPicker || !chart) {
+            return;
+        }
+
+        const useMA = document.getElementById('moving-average-checkbox').checked;
+        const period = document.querySelector('.segmented-control button.active').textContent;
+        let cats;
+        let needsRedraw = false;
+
+        const currentCats = chart.xAxis[0].categories;
+        if (period === '월') {
+            cats = monthlyCategories;
+        } else if (period === '분기') {
+            cats = ['Q1', 'Q2', 'Q3', 'Q4'];
+        } else { // 년
+            cats = [];
+            const startDate = startPicker.selectedDates[0];
+            const endDate = endPicker.selectedDates[0];
+            let sy, ey;
+
+            // 시작일과 종료일 유효성 검사 및 년도 추출
+            if (startDate instanceof Date && !isNaN(startDate)) {
+                sy = startDate.getFullYear();
+            } else {
+                sy = new Date().getFullYear() - 5; // 기본값: 5년 전
+            }
+            if (endDate instanceof Date && !isNaN(endDate)) {
+                ey = endDate.getFullYear();
+            } else {
+                ey = new Date().getFullYear(); // 기본값: 현재 년도
+            }
+
+            // 시작 년도가 종료 년도보다 크면 교환
+            if (sy > ey) {
+                 [sy, ey] = [ey, sy];
+            }
+
+
+            // 합리적인 년도 범위 설정 (예: 1900 ~ 현재+5년)
+            const reasonableStartYear = 1900;
+            const reasonableEndYear = new Date().getFullYear() + 5;
+            const finalSy = Math.max(reasonableStartYear, sy);
+            const finalEy = Math.min(reasonableEndYear, ey);
+
+
+            if (finalSy <= finalEy) {
+                for (let y = finalSy; y <= finalEy; y++) {
+                    cats.push(`${y}년`);
+                }
+            } else {
+                // 유효한 범위가 없으면 현재 년도만 표시
+                cats = [`${new Date().getFullYear()}년`];
+            }
+        }
+
+
+        try {
+            // 카테고리 변경 확인 및 업데이트
+             if (JSON.stringify(currentCats) !== JSON.stringify(cats)) {
+                //console.log("Updating categories:", cats);
+                chart.xAxis[0].setCategories(cats, false); // redraw는 나중에 한번만
+                needsRedraw = true;
+             }
+
+
+            // 시리즈 데이터 업데이트
+             rawData.forEach((d, seriesIndex) => {
+                if (chart.series && chart.series[seriesIndex]) {
+                     let aggregatedData = aggregate(d, period);
+
+
+                    // 이동 평균 적용
+                     if (useMA) {
+                         aggregatedData = aggregatedData.map((val, idx, ar) => {
+                            if (idx < 2 || val === null) return null; // 처음 2개 데이터는 계산 불가
+                             const slice = ar.slice(idx - 2, idx + 1).filter(v => v !== null && v !== undefined); // null, undefined 제외
+                             return slice.length > 0 ? slice.reduce((a, b) => a + b, 0) / slice.length : null;
+                         });
+                     }
+
+
+                    // 데이터 변경 확인 및 업데이트
+                    const currentSeriesData = chart.series[seriesIndex].yData;
+                     if (JSON.stringify(currentSeriesData) !== JSON.stringify(aggregatedData)) {
+                        //console.log(`Updating series ${seriesIndex} data for period ${period}:`, aggregatedData);
+                        chart.series[seriesIndex].setData(aggregatedData, false); // redraw는 나중에 한번만
+                        needsRedraw = true;
+                    }
+                 }
+             });
+
+            // 변경 사항이 있을 경우 차트 다시 그리기
+             if (needsRedraw) {
+                 //console.log("Redrawing chart");
+                 chart.redraw();
+             }
+        } catch (error) {
+            console.error("Error updating Highcharts:", error);
+        }
+    }
+    </script>
+
+</body>
+</html>
