@@ -287,17 +287,23 @@
       exporting: { enabled: false },
       credits: { enabled: false },
       tooltip: {
-        shared: true,
-        useHTML: true,
-        formatter: function () {
-          let tooltipContent = `<b>${this.points[0].key}</b>`;
-          this.points.forEach(point => {
-            tooltipContent += `<br/><span style="color:${point.series.color}">●</span> ` +
-                              `${point.series.name}: <b>${Highcharts.numberFormat(point.y, 2)}</b>`;
-          });
-          return tooltipContent;
-        }
-      },
+  shared: true,
+  formatter: function () {
+    const categories = this.series.chart.xAxis[0].categories;
+    const label = categories[this.points[0].x];
+
+    let s = `<b>${label}</b><br/>`;
+
+    this.points.forEach(p => {
+      s += `
+        <span style="font-size:6px; color:${p.color}; vertical-align:middle; line-height:1;">●</span>
+        <span style="font-size:10px;"> ${p.series.name}: <b>${p.y}</b></span><br/>
+      `;
+    });
+
+    return s;
+  }
+},
       xAxis: {
         categories: ['2024/03', '2024/04', '2024/05', '2024/06', '2024/07', '2024/08', '2024/09', '2024/10', '2024/11', '2024/12', '2025/01', '2025/02', '2025/03'],
         tickPosition: 'inside',
