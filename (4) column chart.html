@@ -470,8 +470,23 @@
                 fallbackToExportServer: false
             },
             tooltip: {
-                shared: true
-            },
+  shared: true,
+  formatter: function () {
+    const categories = this.series.chart.xAxis[0].categories;
+    const label = categories[this.points[0].x];
+
+    let s = `<b>${label}</b><br/>`;
+
+    this.points.forEach(p => {
+      s += `
+        <span style="font-size:6px; color:${p.color}; vertical-align:middle; line-height:1;">●</span>
+        <span style="font-size:10px;"> ${p.series.name}: <b>${p.y}</b></span><br/>
+      `;
+    });
+
+    return s;
+  }
+},
             xAxis: {
                 categories: monthlyCategories,
                 tickPosition: 'inside',
