@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chart with Reordered Controls</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/air-datepicker/2.2.3/css/datepicker.min.css">
+    <style>
+    body {
+        margin:0;
+        padding:0;
+        background-color:#f8f8f8;
+        font-family:'Segoe UI',sans-serif;
+    }
+    .outer-container {
+        border:2px solid #e0e0e0;
+        border-radius:8px;
+        background:#f8f8f8;
+        width:fit-content;
+        margin:40px auto;
+        padding:10px 0;
+        box-sizing:border-box;
+        position:relative;
+    }
+    .chart-header {
+        display:flex;
+        align-items:center;
+        margin-bottom:15px;
+        margin-left:15px;
+        position:relative;
+    }
+    .chart-container {
+        border-top: 2px solid #333;
+        width: 100%;
+        min-width: 521.992px;
+        max-width: 521.992px;
+        height: 435.2px;
+        background: #f8f8f8;
+        border-radius: 0;
+        margin: 0 auto;
+        padding: 40px 15px 10px 15px;
+        box-sizing: border-box;
+        transition: width 0.3s ease, height 0.3s ease;
+        position: relative;
+    }
+    .chart-container.fullscreen {
+        width: 75vw;
+        max-width: 900px;
+        height: auto;
+        padding: 40px 15px 20px 15px;
+        box-sizing: border-box;
+        transition: width 0.3s ease, height 0.3s ease, max-width 0.3s ease;
+        position: relative;
+    }
+    #chart-area {
+        height:360px;
+        width:100%;
+    }
+    .chart-container.fullscreen #chart-area {
+        width:95%;
+        margin:0 auto;
+        height: 360px;
+    }
+    .chart-title {
+        user-select:none;
+        font-size:17px;
+        font-weight:bold;
+        color:#333;
+        margin:0;
+    }
+    .favorite-toggle {
+        cursor:pointer;
+        margin-right:5px;
+    }
+    .info-icon {
+        position:relative;
+        display:inline-block;
+        cursor:pointer;
+        vertical-align:middle;
+        margin-left:4px;
+    }
+    .info-icon svg {
+        display:block;
+    }
+    .tooltip-box {
+        position:absolute;
+        background-color:#ffffff;
+        border:1px solid #ccc;
+        border-radius:4px;
+        padding:8px 12px;
+        font-size:11px;
+        color:#333;
+        white-space:normal;
+        word-break:break-word;
+        overflow-wrap:break-word;
+        max-width:320px;
+        width:320px;
+        box-shadow:0 2px 4px rgba(0,0,0,0.1);
+        z-index:10;
+        opacity:0;
+        pointer-events:none;
+        transition:opacity 0.2s ease-in-out;
+        top:25px;
+        left:0;
+        transform:translateX(-40%);
+    }
+    .info-icon .tooltip-box .annotation,.info-icon .tooltip-box .source {
+        font-size:10px;
+        color:#666;
+        margin-top:5px;
+    }
+    .info-icon:hover .tooltip-box {
+        opacity:1;
+        pointer-events:auto;
+    }
+    .fullscreen-toggle,.download-png,.print-screen {
+        position:absolute;
+        top:0;
+        height:28px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        cursor:pointer;
+        border:none;
+        background:transparent;
+        padding:0;
+    }
+    .fullscreen-toggle {
+        right:85px;
+    }
+    .fullscreen-toggle, .print-screen {
+        width:28px;
+    }
+    .print-screen {
+        right:50px;
+    }
+    .download-png {
+        right:15px;
+        width: 30px;
+    }
+    .fullscreen-toggle img, .download-png img, .print-screen img {
+        max-width:100%;
+        max-height:100%;
+        width:100%;
+        height:100%;
+        border-radius:4px;
+        object-fit:cover; 
+    }
+    .fullscreen-toggle img,.download-png img,.print-screen img {
+        max-width:100%;
+        max-height:100%;
+        width:100%;
+        height:100%;
+        border-radius:4px;
+        object-fit:cover;
+    }
+    .fullscreen-toggle:hover img,.download-png:hover img,.print-screen:hover img {
+        opacity:0.9;
+    }
+    .download-png img {
+        transform:scaleY(1.2);
+        transform-origin:center;
+    }
+    .chart-controls {
+        display:flex;
+        align-items:center;
+        gap:8px;
+        margin-bottom:15px;
+        margin-top:-25px;
+        padding-left:5px;
+    }
+    .chart-container.fullscreen .chart-controls {
+        justify-content:flex-start;
+    }
+    .chart-container.fullscreen .checkbox-container {
+        margin-left:auto;
+        padding-right:5px;
+    }
+    .chart-container.fullscreen .segmented-control {
+        margin-right:0;
+    }
+    .segmented-control {
+        display:flex;
+        gap:4px;
+        width:110px;
+    }
+    .segmented-control button {
+        flex:1;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        border:1px solid #ccc;
+        background:#fff;
+        padding:0 1px;
+        font-size:12px;
+        cursor:pointer;
+        border-radius:3px;
+        height:22px;
+    }
+    .segmented-control button.active {
+        background-color:#e0e0e0;
+    }
+    .date-range-container {
+        display:flex;
+        align-items:center;
+        gap:6px;
+    }
+    .date-range-container span {
+        font-size:12px;
+        color:#333;
+    }
+    .time-selector {
+        font-size:12px;
+        padding:4px 8px;
+        border:1px solid #ccc;
+        border-radius:4px;
+        background:#fff;
+        cursor:pointer;
+        width:70px;
+    }
+    .checkbox-container {
+        display:flex;
+        align-items:center;
+        font-size:12px;
+        color:#333;
+    }
+    .checkbox-container input[type="checkbox"] {
+        appearance: none; 
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        width: 20px;  
+        height: 20px; 
+        background-color: #fff; 
+        border: 1px solid #ccc;
+        border-radius: 3px;    
+        cursor: pointer;
+        vertical-align: middle; 
+        margin-right: 4px;
+        position: relative;     
+        outline: none;          
+        display: inline-block;  
+        transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+    }
+    .checkbox-container input[type="checkbox"]:checked {
+        background-color: #E0E0E0;
+        border-color: #E0E0E0;     
+    }
+    .checkbox-container input[type="checkbox"]::after {
+        content: ""; 
+        position: absolute;
+        display: none; 
+        left: 7px; 
+        top: 3px;   
+        width: 5px; 
+        height: 10px;
+
+        border-style: solid;
+        border-color: #333; 
+        border-width: 0 1.5px 1.5px 0; 
+
+        transform: rotate(45deg); 
+    }
+
+    /* 체크박스가 체크되었을 때 커스텀 체크 마크 표시 */
+    .checkbox-container input[type="checkbox"]:checked::after {
+        display: block;
+    }
+    .checkbox-container label {
+        user-select:none;
+    }
+    .datepicker {
+        z-index:1100 !important;
+        width: 200px !important;
+        box-sizing: border-box !important;
+    }
+    .datepicker--nav-title { /* air-datepicker 네비게이션 제목 */
+        font-weight: bold; /* 기존 굵기 유지 */
+        font-size: 14px !important; /* 크기 14px로 조정 */
+    }
+    /* --- 커스텀 분기 선택 팝업 스타일 --- */
+    .custom-popup {
+        position: absolute;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        z-index: 1110;
+        padding: 10px; /* 상하좌우 내부 여백 */
+        display: none;
+        width: 200px;
+        box-sizing: border-box;
+        height: 215px; 
+
+        display: flex;
+        flex-direction: column; 
+    }
+    .quarter-picker-nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px; 
+        font-size: 14px;
+        font-weight: bold;
+        flex-shrink: 0;
+    }
+    .quarter-picker-nav button { 
+        background:none;
+        border:none;
+        cursor:pointer;
+        font-size: 14px; /* 화살표 버튼 크기 */
+        font-weight: bold; /* 화살표 버튼 굵기 */
+        padding:0 5px;
+        color:#555;
+    }
+    .quarter-picker-nav button:hover {
+        color:#000;
+    }
+
+    .quarter-buttons {
+        display: grid;
+        grid-template-columns: 1fr 1fr; 
+        grid-template-rows: 1fr 1fr;   
+        gap: 8px;                    
+
+        flex-grow: 1;
+        min-height: 0; 
+    }
+    .quarter-buttons button {
+        border: 1px solid #ccc;
+        background-color: #fff;
+        border-radius: 4px;
+        font-size: 14px;
+        font-weight: normal;
+        cursor: pointer;
+
+        display: flex;
+        align-items: center;    /* 텍스트 세로 중앙 정렬 */
+        justify-content: center; /* 텍스트 가로 중앙 정렬 */
+        height: 100%;           /* grid-template-rows: 1fr에 의해 할당된 셀 높이를 100% 사용 */
+        width: 100%;            /* 할당된 셀 너비를 100% 사용 */
+        padding: 5px;           /* 버튼 내부 여백 */
+        box-sizing: border-box;
+    }
+    .quarter-buttons button:hover {
+        background-color: #f0f0f0;
+    }
+
+    .chart-container:not(.fullscreen) .chart-controls .checkbox-container {
+        margin-left: auto;
+    }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/air-datepicker/2.2.3/js/datepicker.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/air-datepicker/2.2.3/js/i18n/datepicker.kr.min.js"></script>
+</head>
+<body lang="ko">
+    <div class="outer-container">
+        <div class="chart-header">
+            <img id="favorite-toggle" class="favorite-toggle inactive" src="https://i.postimg.cc/PJMYK8Zf/non-fav.png" width="17" height="17" alt="즐겨찾기" style="margin-top: 3px;margin-right: 0px;"/>
+            <h2 class="chart-title" style="margin-top: 3px;">자기자본이익률(ROE)</h2>
+            <div class="info-icon"> <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2" style="margin-top: 3px;" stroke-linecap="round" stroke-linejoin="round"> <circle cx="12" cy="12" r="10"></circle><path d="M9 9a3 3 0 1 1 6 0c0 1.5-3 2-3 4"></path><circle cx="12" cy="17" r="1"></circle> </svg> 
+                <div class="tooltip-box">
+                이 그래프는 기업이 자본을 얼마나 효율적으로 활용해 수익을 창출했는지를 보여주는 자기자본이익률(ROE)을 나타냅니다. ROE는 기업의 수익성 및 자본 효율성을 평가하는 중요한 지표로, 기업의 성과가 얼마나 효과적으로 이루어졌는지를 시각적으로 분석할 수 있습니다.
+                <br><br><div class="annotation">주 : 1) 자료는 계절조정치 기준</div>
+                <div class="source">자료: 통계청</div>
+              </div> 
+            </div>
+            <button id="fullscreen-toggle" class="fullscreen-toggle" title="그래프 확대"><img src="https://i.postimg.cc/xjbMR8GG/full-screen-interface-symbol-of-four-arrows-in-square-button.png" alt="Fullscreen Icon"></button>
+            <button id="print-screen" class="print-screen" title="화면 인쇄"><img src="https://i.postimg.cc/QNkvHLbQ/unnamed.png" alt="Print Screen"></button>
+            <button id="download-png" class="download-png" title="이미지 저장"><img src="https://i.postimg.cc/J0g8JsFt/print.png" alt="Download PNG"></button>
+        </div>
+        <div class="chart-container" style="padding-right: 15px;">
+            <div class="chart-controls">
+                <div class="segmented-control">
+                    <button class="active" data-period="month">월</button>
+                    <button data-period="quarter">분기</button>
+                    <button data-period="year">년</button>
+                </div>
+                <div class="date-range-container">
+                    <input class="time-selector" id="start-date" placeholder="시작일">
+                    <span>~</span>
+                    <input class="time-selector" id="end-date" placeholder="종료일">
+                </div>
+                <div class="checkbox-container">
+                    <input type="checkbox" id="moving-average-checkbox">
+                    <label for="moving-average-checkbox">3기간 이동평균</label>
+                </div>
+            </div>
+            <div id="chart-area"></div>
+        </div>
+    </div>
+
+    <div id="quarter-picker-popup" class="custom-popup">
+        <div class="quarter-picker-nav">
+            <button id="quarter-picker-prev-year">&lt;</button>
+            <span id="quarter-picker-year"></span>
+            <button id="quarter-picker-next-year">&gt;</button>
+        </div>
+        <div class="quarter-buttons">
+            <button data-quarter="1">1분기<br>(1월~3월)</button>
+            <button data-quarter="2">2분기<br>(4월~6월)</button>
+            <button data-quarter="3">3분기<br>(7월~9월)</button>
+            <button data-quarter="4">4분기<br>(10월~12월)</button>
+        </div>
+    </div>
+
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/offline-exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/no-data-to-display.js"></script>
+
+    <script>
+    (function ($) {
+        $.fn.datepicker.language['kr'] = {
+            days: ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'],
+            daysShort: ['일', '월', '화', '수', '목', '금', '토'],
+            daysMin: ['일', '월', '화', '수', '목', '금', '토'],
+            months: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+            monthsShort: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+            today: '오늘',
+            clear: '지우기',
+            dateFormat: 'yyyy-mm-dd', // 기본 일자 포맷
+            timeFormat: 'hh:ii aa',
+            firstDay: 0
+        };
+    })(jQuery);
+
+    let chart;
+    let startDatePicker = null, endDatePicker = null;
+    let currentPeriodType = 'month';
+    let quarterPickerYear = new Date().getFullYear();
+    let activeQuarterInput = null;
+
+    const baseMonthlyCategories = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'];
+    const rawData = [
+        [10, 25, 40, 30, 50, 20, 60, 35, 70, 55, 45, 65],
+        [90, 60, 70, 40, 80, 20, 30, 10, 5, 0, 15, 25],
+        [30, 80, 50, 90, 70, 100, 60, 40, 20, 10, 35, 45],
+        [5, 15, 25, 55, 45, 75, 65, 85, 95, 100, 90, 110]
+    ];
+
+    function aggregateToQuarters(monthlyDataSeries) {
+        const quarterlyData = [null, null, null, null];
+        if (!monthlyDataSeries || monthlyDataSeries.length < 12) {
+            for(let i=0; i<4; i++){
+                const startIdx = i*3;
+                if(monthlyDataSeries.length >= startIdx + 3){
+                    quarterlyData[i] = monthlyDataSeries.slice(startIdx, startIdx + 3).reduce((sum, val) => (sum || 0) + (val || 0), 0);
+                } else {
+                    let partialSum = 0;
+                    let count = 0;
+                    for(let j=startIdx; j < monthlyDataSeries.length && j < startIdx+3; j++){
+                        if(monthlyDataSeries[j] !== null && monthlyDataSeries[j] !== undefined){
+                            partialSum += monthlyDataSeries[j];
+                            count++;
+                        }
+                    }
+                    quarterlyData[i] = count > 0 ? partialSum : null;
+                }
+            }
+            return quarterlyData;
+        }
+        quarterlyData[0] = monthlyDataSeries.slice(0, 3).reduce((sum, val) => (sum || 0) + (val || 0), 0);
+        quarterlyData[1] = monthlyDataSeries.slice(3, 6).reduce((sum, val) => (sum || 0) + (val || 0), 0);
+        quarterlyData[2] = monthlyDataSeries.slice(6, 9).reduce((sum, val) => (sum || 0) + (val || 0), 0);
+        quarterlyData[3] = monthlyDataSeries.slice(9, 12).reduce((sum, val) => (sum || 0) + (val || 0), 0);
+        return quarterlyData;
+    }
+
+    function getBaseOptions() {
+        return {
+            language: 'kr', autoClose: true, clearButton: false, todayButton: false,
+            navTitles: { days: 'yyyy MM', months: 'yyyy', years: 'yyyy1 - yyyy2' }
+        };
+    }
+
+    function manageDatePickers(periodType) {
+        const startDateInput = $('#start-date');
+        const endDateInput = $('#end-date');
+
+        if (startDatePicker) { startDatePicker.destroy(); startDatePicker = null; }
+        if (endDatePicker) { endDatePicker.destroy(); endDatePicker = null; }
+
+        startDateInput.off('click.quarterPicker');
+        endDateInput.off('click.quarterPicker');
+        $('#start-date, #end-date').prop('disabled', false).css('cursor', 'pointer');
+
+        let options = getBaseOptions(); // 기본 옵션 가져오기
+
+        if (periodType === 'month') {
+            options.view = 'months';      // 월 선택 뷰로 시작
+            options.minView = 'months';     // 최소 선택 단위를 월로 제한
+            options.dateFormat = 'yyyy-mm'; // 입력창에 표시될 날짜 형식
+            // options.monthsField = 'monthsShort'; // 월 표시에 짧은 이름 사용 (예: 1월) - air-datepicker v2.2.3에는 이 옵션이 명시적으로 없을 수 있음, 대신 locale의 monthsShort가 활용됨.
+                                               // 기본적으로 locale의 monthsShort가 사용될 것으로 예상됨.
+            startDateInput.val('').attr('placeholder', '시작월');
+            endDateInput.val('').attr('placeholder', '종료월');
+        } else if (periodType === 'year') {
+            options.view = 'years';
+            options.minView = 'years';
+            options.dateFormat = 'yyyy';
+            startDateInput.val('').attr('placeholder', '시작년도');
+            endDateInput.val('').attr('placeholder', '종료년도');
+        } else if (periodType === 'quarter') {
+            // 분기 선택 로직은 기존 유지
+            startDateInput.val('').attr('placeholder', '시작 분기');
+            endDateInput.val('').attr('placeholder', '종료 분기');
+            startDateInput.on('click.quarterPicker', function() {
+                activeQuarterInput = $(this);
+                showQuarterPicker($(this));
+            });
+            endDateInput.on('click.quarterPicker', function() {
+                activeQuarterInput = $(this);
+                showQuarterPicker($(this));
+            });
+            // 분기 선택 시에는 air-datepicker를 직접 사용하지 않으므로 여기서 반환
+            updateChart(); // 초기 placeholder 설정 후 차트 업데이트
+            return;
+        }
+
+
+        // 월 또는 연도 선택기 초기화
+        startDatePicker = startDateInput.datepicker({
+            ...options, // 해당 periodType에 맞게 수정된 options 적용
+            onSelect: function (fd, date, inst) {
+                if (endDatePicker && date instanceof Date) {
+                    const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
+                    endDatePicker.update('minDate', firstDayOfMonth);
+                }
+                updateChart();
+            }
+        }).data('datepicker');
+
+        endDatePicker = endDateInput.datepicker({
+            ...options, // 해당 periodType에 맞게 수정된 options 적용
+            onSelect: function (fd, date, inst) {
+                if (startDatePicker && date instanceof Date) {
+                     const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
+                    startDatePicker.update('maxDate', firstDayOfMonth);
+                }
+                updateChart();
+            }
+        }).data('datepicker');
+
+        startDatePicker.clear();
+        endDatePicker.clear();
+        // Placeholder는 위에서 periodType에 따라 이미 설정됨
+        updateChart(); // 초기화 후 차트 업데이트
+    }
+
+
+    const quarterPickerPopup = document.getElementById('quarter-picker-popup');
+    const quarterYearSpan = document.getElementById('quarter-picker-year');
+    const quarterButtonsDiv = quarterPickerPopup.querySelector('.quarter-buttons');
+
+    function showQuarterPicker(targetInput) {
+        if(startDatePicker) startDatePicker.hide();
+        if(endDatePicker) endDatePicker.hide();
+
+        quarterYearSpan.textContent = `${quarterPickerYear}년`;
+        const rect = targetInput[0].getBoundingClientRect();
+        quarterPickerPopup.style.top = `${rect.bottom + window.scrollY + 5}px`;
+        quarterPickerPopup.style.left = `${rect.left + window.scrollX}px`;
+        quarterPickerPopup.style.display = 'block';
+        setTimeout(() => { document.addEventListener('click', hideQuarterPickerOnClickOutside, { capture: true, once: true }); }, 0);
+    }
+
+    function hideQuarterPicker() {
+        quarterPickerPopup.style.display = 'none';
+        document.removeEventListener('click', hideQuarterPickerOnClickOutside, { capture: true });
+    }
+
+    function hideQuarterPickerOnClickOutside(event) {
+        const target = event.target;
+        if (!quarterPickerPopup.contains(target) && !$(target).closest('.time-selector').length) {
+            hideQuarterPicker();
+        } else {
+            setTimeout(() => { document.addEventListener('click', hideQuarterPickerOnClickOutside, { capture: true, once: true }); }, 0);
+        }
+    }
+
+    function parseQuarterStringToDateRange(quarterStr) {
+        if (!quarterStr) return null;
+        const match = quarterStr.match(/(\d{4})년\s*([1-4])분기/);
+        if (match) {
+            const year = parseInt(match[1]);
+            const quarter = parseInt(match[2]);
+            const startMonth = (quarter - 1) * 3;
+            const startDateObj = new Date(year, startMonth, 1);
+            const endDateObj = new Date(year, startMonth + 3, 0);
+            return { year, quarter, startDateObj, endDateObj };
+        }
+        return null;
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        manageDatePickers(currentPeriodType); // 초기 '월' 선택에 맞춰 datepicker 설정
+
+        const favBtn = document.getElementById('favorite-toggle'); let isActive = false; favBtn.addEventListener('click', () => { isActive = !isActive; if (isActive) { favBtn.src = 'https://i.postimg.cc/90PtSk3h/fav.png'; favBtn.classList.remove('inactive'); favBtn.classList.add('active'); } else { favBtn.src = 'https://i.postimg.cc/PJMYK8Zf/non-fav.png'; favBtn.classList.remove('active'); favBtn.classList.add('inactive'); } });
+        const chartDom = document.querySelector('.chart-container'); document.getElementById('fullscreen-toggle').addEventListener('click', function() { chartDom.classList.toggle('fullscreen'); if (chart) { setTimeout(() => chart.reflow(), 0); } });
+
+        chart = Highcharts.chart('chart-area', {
+            chart: {
+                type: 'spline',
+                backgroundColor: '#f8f8f8',
+                spacing: [30, 20, 20, -48]
+            },
+            title: {
+                text: null
+            },
+            credits: {
+                enabled: false
+            },
+            exporting: {
+                enabled: false,
+                fallbackToExportServer: false
+            },
+            tooltip: {
+                shared: true,
+                useHTML: true, 
+                formatter: function () {
+                    let label = ''; 
+
+                    try {
+                        if (this.points && this.points.length > 0) {
+                            const point = this.points[0].point; 
+                            const categories = point.series.chart.xAxis[0].categories; 
+                            const pointIndex = point.index; 
+                            if (categories && typeof pointIndex !== 'undefined' && categories[pointIndex]) {
+                                label = categories[pointIndex];
+                            } else {
+                                label = this.x;
+                            }
+                        } else {
+                            label = this.x || '';
+                        }
+                    } catch (e) {
+                        label = this.x || '';
+                    }
+
+                    let s = `<span><b>${label}</b></span><br/>`;
+
+                    this.points.forEach(p => { 
+                        let value = p.y;
+                        let formattedValue;
+                        if (value === null || typeof value === 'undefined') {
+                            formattedValue = '-';
+                        } else {
+                            let roundedValue = Math.round(value * 10) / 10;
+                            if (Number.isInteger(roundedValue)) {
+                                formattedValue = roundedValue;
+                            } else {
+                                formattedValue = roundedValue.toFixed(1);
+                            }
+                        }
+                        s += `
+                            <span style="font-size:6px; color:${p.color}; vertical-align:middle; line-height:1;">●</span>
+                            <span style="font-size:10px;"> ${p.series.name}: <b style="margin-left: 1px;">${formattedValue}</b></span><br/>
+                        `;
+                    });
+
+                    return s; // 최종 툴팁 HTML 반환
+                }
+            }, 
+            xAxis: {
+                categories: baseMonthlyCategories,
+                tickPosition: 'inside',
+                tickLength: 5,
+                lineColor: '#B8B8B8',
+                lineWidth: 1,
+                tickColor: '#B8B8B8',
+                tickWidth: 1,
+                gridLineWidth: 0,
+                tickmarkPlacement: 'on',
+                labels: {
+                    y: 13
+                }
+            },
+            yAxis: {
+                ignoreHiddenSeries: false,
+                offset: 0,
+                tickPosition: 'inside',
+                tickLength: 5,
+                lineColor: '#B8B8B8',
+                lineWidth: 1,
+                tickColor: '#B8B8B8',
+                tickWidth: 1,
+                gridLineWidth: 0,
+                title: {
+                    text: '(백만원)',
+                    align: 'high',
+                    rotation: 0,
+                    y: -7,
+                    x: 75,
+                    style: {
+                        fontSize: '11px',
+                        fontWeight: 'normal',
+                        color: '#333',
+                        opacity: 1
+                    }
+                },
+                labels: {
+                    x: -5
+                }
+            },
+            legend: {
+                align: 'center',
+                verticalAlign: 'bottom',
+                layout: 'horizontal',
+                itemMarginBottom: 5,
+                x: 33,
+                y: 30
+            },
+            plotOptions: {
+                series: {
+                    states: {
+                        inactive: {
+                            opacity: 0.2
+                        },
+                        hover: {
+                            lineWidthPlus: 2
+                        }
+                    },
+                    marker: {
+                        enabled: true,
+                        states: {
+                            hover: {
+                                enabled: true,
+                                radius: 6
+                            }
+                        }
+                    },
+                    events: {
+                        mouseOver() {
+                            const c = this.chart;
+                            c.series.forEach(s => {
+                                if (s !== this && s.visible) {
+                                    s.group.attr({
+                                        opacity: 0.2
+                                    });
+                                    s.markerGroup && s.markerGroup.attr({
+                                        opacity: 0.2
+                                    });
+                                }
+                            });
+                        },
+                        mouseOut() {
+                            const c = this.chart;
+                            c.series.forEach(s => {
+                                s.group.attr({
+                                    opacity: 1
+                                });
+                                s.markerGroup && s.markerGroup.attr({
+                                    opacity: 1
+                                });
+                            });
+                        },
+                        legendItemClick: function() {
+                            const chart = this.chart;
+                            setTimeout(() => {
+                                let anySeriesVisible = chart.series.some(s => s.visible);
+                                chart.yAxis[0].update({
+                                    title: {
+                                        style: {
+                                            opacity: anySeriesVisible ? 1 : 0
+                                        }
+                                    }
+                                }, true);
+                            }, 0);
+                            return true;
+                        }
+                    }
+                }
+            },
+            series: rawData.map((d, i) => ({
+                name: `시리즈 ${i + 1}`,
+                data: [...d]
+            }))
+        });
+
+        document.querySelectorAll('.segmented-control button').forEach(button => {
+            button.addEventListener('click', () => {
+                document.querySelectorAll('.segmented-control button').forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                const newPeriodType = button.dataset.period;
+                if (currentPeriodType !== newPeriodType) {
+                    currentPeriodType = newPeriodType;
+                    manageDatePickers(currentPeriodType); // 여기서 periodType에 맞게 datepicker가 재설정됨
+                } else {
+                     // 같은 버튼을 다시 눌렀을 때 (예: 월 -> 월), datepicker는 이미 설정되어 있으므로 차트만 업데이트
+                    updateChart();
+                }
+                // manageDatePickers 내부에서 updateChart가 호출될 수 있으므로, 중복 호출을 피하려면 로직 검토 필요
+                // 현재 manageDatePickers는 월/연도 선택기 설정 후 updateChart를 호출하고, 분기는 return 후 updateChart를 호출하므로
+                // 이 위치의 updateChart()는 제거해도 될 수 있으나, periodType이 바뀌지 않은 경우를 위해 남겨둘 수 있음.
+                // 혹은 manageDatePickers에서 항상 updateChart를 호출하도록 수정.
+                // 여기서는 currentPeriodType이 변경될 때만 manageDatePickers를 호출하고, 그 안에서 updateChart가 되므로
+                // 이 위치의 updateChart()는 불필요해 보임. 단, periodType이 바뀌지 않았을 때의 동작을 명확히 하려면 필요할 수 있음.
+                // 우선은 manageDatePickers에서 periodType에 따라 updateChart()를 호출하도록 했으므로 여기서는 제거.
+            });
+        });
+
+        document.getElementById('quarter-picker-prev-year').addEventListener('click', () => {
+            quarterPickerYear--;
+            if (quarterPickerPopup.style.display === 'block' && activeQuarterInput) {
+                quarterYearSpan.textContent = `${quarterPickerYear}년`;
+            }
+        });
+        document.getElementById('quarter-picker-next-year').addEventListener('click', () => {
+            quarterPickerYear++;
+            if (quarterPickerPopup.style.display === 'block' && activeQuarterInput) {
+                quarterYearSpan.textContent = `${quarterPickerYear}년`;
+            }
+        });
+        quarterButtonsDiv.querySelectorAll('button').forEach(button => {
+            button.addEventListener('click', () => {
+                const quarter = parseInt(button.dataset.quarter);
+                const year = quarterPickerYear;
+                const quarterDisplayText = `${year}년 ${quarter}분기`;
+                if (activeQuarterInput) {
+                    activeQuarterInput.val(quarterDisplayText);
+                }
+                hideQuarterPicker();
+                updateChart();
+            });
+        });
+
+        document.getElementById('moving-average-checkbox').addEventListener('change', updateChart);
+        document.getElementById('download-png').addEventListener('click', () => { if (chart) { chart.exportChartLocal({ type: 'image/png', filename: 'chart' }); } });
+        document.getElementById('print-screen').addEventListener('click', () => { window.print(); });
+        
+        // updateChart(); // DOMContentLoaded 후 최초 차트 로드, manageDatePickers에서 이미 호출됨.
+    });
+
+    function updateChart() {
+        if (!chart) return;
+
+        const period = currentPeriodType;
+        let effectiveStartDate, effectiveEndDate;
+
+        if (period === 'month') {
+            effectiveStartDate = startDatePicker ? startDatePicker.selectedDates[0] : null;
+            effectiveEndDate = endDatePicker ? endDatePicker.selectedDates[0] : null;
+        } else if (period === 'year') {
+            effectiveStartDate = startDatePicker ? startDatePicker.selectedDates[0] : null;
+            effectiveEndDate = endDatePicker ? endDatePicker.selectedDates[0] : null;
+            if (effectiveStartDate) effectiveStartDate = new Date(effectiveStartDate.getFullYear(), 0, 1);
+            if (effectiveEndDate) effectiveEndDate = new Date(effectiveEndDate.getFullYear(), 11, 31);
+        } else if (period === 'quarter') {
+            const startQuarterInfo = parseQuarterStringToDateRange($('#start-date').val());
+            const endQuarterInfo = parseQuarterStringToDateRange($('#end-date').val());
+
+            if (startQuarterInfo && endQuarterInfo) {
+                effectiveStartDate = startQuarterInfo.startDateObj;
+                effectiveEndDate = endQuarterInfo.endDateObj;
+                if (effectiveStartDate > effectiveEndDate) {
+                    effectiveEndDate = startQuarterInfo.endDateObj;
+                    $('#end-date').val($('#start-date').val());
+                }
+            } else if (startQuarterInfo) {
+                effectiveStartDate = startQuarterInfo.startDateObj;
+                effectiveEndDate = startQuarterInfo.endDateObj;
+                $('#end-date').val($('#start-date').val());
+            } else if (endQuarterInfo) {
+                effectiveStartDate = endQuarterInfo.startDateObj;
+                effectiveEndDate = endQuarterInfo.endDateObj;
+                $('#start-date').val($('#end-date').val());
+            } else {
+                effectiveStartDate = null;
+                effectiveEndDate = null;
+            }
+        }
+
+        const useMA = document.getElementById('moving-average-checkbox').checked;
+        let cats = [];
+        let dataSetToUse = rawData.map(() => []);
+        let needsRedraw = false;
+
+        if (effectiveStartDate && effectiveEndDate) {
+            if (period === 'month') {
+                const startYear = effectiveStartDate.getFullYear();
+                const startMonth = effectiveStartDate.getMonth();
+                const endYear = effectiveEndDate.getFullYear();
+                const endMonth = effectiveEndDate.getMonth();
+                let currentIterYear = startYear;
+                let currentIterMonth = startMonth;
+                const monthDataIndices = [];
+                while (currentIterYear < endYear || (currentIterYear === endYear && currentIterMonth <= endMonth)) {
+                    cats.push(`${currentIterYear}년 ${baseMonthlyCategories[currentIterMonth]}`);
+                    monthDataIndices.push(currentIterMonth);
+                    currentIterMonth++;
+                    if (currentIterMonth > 11) {
+                        currentIterMonth = 0;
+                        currentIterYear++;
+                    }
+                }
+                if (cats.length > 0) {
+                    dataSetToUse = rawData.map(seriesData =>
+                        monthDataIndices.map(monthIdx => seriesData[monthIdx])
+                    );
+                }
+            } else if (period === 'quarter') {
+                const startQYear = effectiveStartDate.getFullYear();
+                const startQuarterNum = Math.floor(effectiveStartDate.getMonth() / 3) + 1;
+                const endQYear = effectiveEndDate.getFullYear();
+                const endQuarterNum = Math.floor(effectiveEndDate.getMonth() / 3) + 1;
+                let currentQIterYear = startQYear;
+                let currentQIterNum = startQuarterNum;
+                const quarterDataList = [];
+                while(currentQIterYear < endQYear || (currentQIterYear === endQYear && currentQIterNum <= endQuarterNum)) {
+                    cats.push(`${currentQIterYear}년 ${currentQIterNum}분기`);
+                    const monthStartIndex = (currentQIterNum - 1) * 3;
+                    const quarterMonthsData = rawData.map(series =>
+                        series.slice(monthStartIndex, monthStartIndex + 3).reduce((sum, val) => (sum || 0) + (val || 0), 0)
+                    );
+                    quarterDataList.push(quarterMonthsData);
+                    currentQIterNum++;
+                    if (currentQIterNum > 4) {
+                        currentQIterNum = 1;
+                        currentQIterYear++;
+                    }
+                }
+                if (cats.length > 0) {
+                    dataSetToUse = rawData.map((_, seriesIdx) =>
+                        quarterDataList.map(qDataForAllSeries => qDataForAllSeries[seriesIdx])
+                    );
+                }
+            } else if (period === 'year') {
+                const startYearVal = effectiveStartDate.getFullYear();
+                const endYearVal = effectiveEndDate.getFullYear();
+                for (let y = startYearVal; y <= endYearVal; y++) {
+                    cats.push(`${y}년`);
+                }
+                if (cats.length > 0) {
+                    const yearlySums = rawData.map(seriesData =>
+                        seriesData.reduce((sum, val) => (sum || 0) + (val || 0), 0)
+                    );
+                    dataSetToUse = rawData.map((_, seriesIdx) =>
+                        Array(cats.length).fill(yearlySums[seriesIdx])
+                    );
+                }
+            }
+        } else {
+            if (period === 'month') cats = [...baseMonthlyCategories];
+            else if (period === 'quarter') cats = ['1분기', '2분기', '3분기', '4분기'];
+            else if (period === 'year') cats = [`${new Date().getFullYear()}년`];
+
+            if (period === 'month') dataSetToUse = rawData.map(d => [...d]);
+            else if (period === 'quarter') dataSetToUse = rawData.map(d => aggregateToQuarters(d));
+            else if (period === 'year') {
+                const yearlySums = rawData.map(seriesData => seriesData.reduce((sum, val) => (sum || 0) + (val || 0), 0));
+                dataSetToUse = rawData.map((_, seriesIdx) => [yearlySums[seriesIdx]]);
+            }
+        }
+
+        if (useMA) {
+            dataSetToUse = dataSetToUse.map(seriesData => {
+                if (seriesData.length < 3) return seriesData.map(()=>null);
+                return seriesData.map((val, idx, arr) => {
+                    if (idx < 2) return null;
+                    const slice = arr.slice(idx - 2, idx + 1).filter(v => v !== null && v !== undefined);
+                    return slice.length === 3 ? slice.reduce((a, b) => a + b, 0) / 3 : null;
+                });
+            });
+        }
+
+        try {
+            const currentCats = chart.xAxis[0].categories;
+            if (!currentCats || JSON.stringify(currentCats) !== JSON.stringify(cats)) {
+                chart.xAxis[0].setCategories(cats.length > 0 ? cats : null, false);
+                needsRedraw = true;
+            }
+            dataSetToUse.forEach((seriesFinalData, seriesIndex) => {
+                if (chart.series && chart.series[seriesIndex]) {
+                    const currentSeriesData = chart.series[seriesIndex].yData;
+                    const finalDataForComparison = seriesFinalData && seriesFinalData.length > 0 ? seriesFinalData : [];
+                    const currentDataForComparison = currentSeriesData && currentSeriesData.length > 0 ? currentSeriesData : [];
+                    if (JSON.stringify(currentDataForComparison) !== JSON.stringify(finalDataForComparison)) {
+                        chart.series[seriesIndex].setData(seriesFinalData.length > 0 ? seriesFinalData : [], false);
+                        needsRedraw = true;
+                    }
+                }
+            });
+            const noData = dataSetToUse.every(series => series.length === 0) && cats.length === 0;
+            if (noData && chart.series.length > 0) {
+                chart.series.forEach(s => s.setData([], false));
+                needsRedraw = true;
+            }
+            if (needsRedraw) {
+                chart.redraw();
+            }
+        } catch (error) {
+            console.error("Error updating Highcharts:", error);
+        }
+    }
+    </script>
+
+</body>
+</html>
