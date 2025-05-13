@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>세계 100대 브랜드 가치 (2024)</title>
+
+  <!-- Highcharts Scripts -->
+  <script src="https://code.highcharts.com/highcharts.js"></script>
+  <script src="https://code.highcharts.com/highcharts-more.js"></script>
+  <script src="https://code.highcharts.com/modules/exporting.js"></script>
+  <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+  <!-- 스타일 -->
+  <style>
+    .highcharts-figure,
+    .highcharts-data-table table {
+      min-width: 320px;
+      max-width: 800px;
+      margin: 1em auto;
+    }
+
+    .highcharts-data-table table {
+      font-family: Verdana, sans-serif;
+      border-collapse: collapse;
+      border: 1px solid #ebebeb;
+      margin: 10px auto;
+      text-align: center;
+      width: 100%;
+      max-width: 500px;
+    }
+
+    .highcharts-data-table caption {
+      padding: 1em 0;
+      font-size: 1.2em;
+      color: #555;
+    }
+
+    .highcharts-data-table th {
+      font-weight: 600;
+      padding: 0.5em;
+    }
+
+    .highcharts-data-table td,
+    .highcharts-data-table th,
+    .highcharts-data-table caption {
+      padding: 0.5em;
+    }
+
+    .highcharts-data-table thead tr,
+    .highcharts-data-table tbody tr:nth-child(even) {
+      background: #f8f8f8;
+    }
+
+    .highcharts-data-table tr:hover {
+      background: #f1f7ff;
+    }
+
+    .highcharts-description {
+      margin: 0.3rem 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <figure class="highcharts-figure">
+    <div id="container"></div>
+  </figure>
+
+  <!-- 차트 스크립트 -->
+  <script>
+    Highcharts.chart('container', {
+      chart: {
+        type: 'packedbubble',
+        height: '100%'
+      },
+      title: {
+        text: '세계 100대 브랜드 가치 (2024)',
+        style: {
+          fontSize: '21px',
+          fontWeight: 'bold',
+          fontFamily: 'Montserrat, sans-serif',
+          color: '#333333'
+        }
+      },
+      credits: {
+        enabled: false // Highcharts.com 로고 숨기기
+      },
+      tooltip: {
+        useHTML: true,
+        formatter: function () {
+          return `
+            <div style="text-align:center; font-family:'Montserrat', sans-serif;">
+              <div style="font-size:14px; font-weight:normal;">${this.point.rank}</div>
+              <div style="font-size:18px; font-weight:bold; margin-top:4px; letter-spacing:0.5px;">${this.point.name}</div>
+              <div style="font-size:13px; font-weight:normal; margin-top:2px;">${this.point.country}</div>
+              <div style="font-size:18px; font-weight:bold; margin-top:4px; letter-spacing:0.5px;">$${Highcharts.numberFormat(this.point.value, 0, '.', ',')}M</div>
+            </div>
+          `;
+        }
+      },
+      plotOptions: {
+        packedbubble: {
+          minSize: '40%',
+          maxSize: '120%',
+          zMin: 0,
+          zMax: 520000,
+          layoutAlgorithm: {
+            splitSeries: false,
+            gravitationalConstant: 0.02,
+            friction: 0.5,
+            initialPositionRadius: 300,
+            maxSpeed: 100
+          },
+          dataLabels: {
+            enabled: true,
+            useHTML: true,
+            formatter: function () {
+              if (this.point.rank > 10) {
+                return null;
+              }
+
+              let fontSize = '12px';
+              let fontWeight = 'normal';
+
+              if (this.point.rank === 1) {
+                fontSize = '18px';
+                fontWeight = 'bold';
+              } else if (this.point.rank == 2) {
+                fontSize = '14px';
+                fontWeight = '600';
+              } else if (this.point.rank == 3) {
+                fontSize = '13px';
+                fontWeight = '600';
+              } else if (this.point.rank == 4) {
+                fontSize = '12px';
+                fontWeight = '600';
+              } else if (this.point.rank == 5) {
+                fontSize = '10px';
+                fontWeight = '600';
+              } else if (this.point.rank >= 6 && this.point.rank <= 10) {
+                fontSize = '10px';
+                fontWeight = '600';
+              }
+
+              return `
+                <div style="text-align:center; font-family:'Montserrat', sans-serif; letter-spacing:0.5px;">
+                  <div style="font-size:${parseInt(fontSize) - 2}px; font-weight:${fontWeight}; margin-bottom:2px;">${this.point.rank}</div>
+                  <div style="font-size:${fontSize}; font-weight:${fontWeight};">${this.point.name}</div>
+                </div>
+              `;
+            },
+            style: {
+              color: 'black',
+              textOutline: 'none'
+            },
+            verticalAlign: 'middle',
+            y: 0
+          }
+        }
+      },
+ series: [
+        {
+            name: '북아메리카',
+            color: '#135FAA', // 북아메리카 색상
+            data: [
+                { name: 'Apple', value: 488900, rank: 1, country: '미국' },
+                { name: 'Microsoft', value: 352500, rank: 2, country: '미국' },
+                { name: 'Amazon', value: 298100, rank: 3, country: '미국' },
+                { name: 'Google', value: 291300, rank: 4, country: '미국' },
+                { name: 'Coca-Cola', value: 61200, rank: 7, country: '미국' },
+                { name: 'McDonald’s', value: 53000, rank: 9, country: '미국' },
+                { name: 'Tesla', value: 45500, rank: 12, country: '미국' },
+                { name: 'Cisco', value: 45500, rank: 13, country: '미국', },
+                { name: 'Nike', value: 45400, rank: 14, country: '미국' },
+                { name: 'Instagram', value: 45100, rank: 15, country: '미국', },
+                { name: 'Disney', value: 42800, rank: 16, country: '미국' },
+                { name: 'Adobe', value: 39400, rank: 17, country: '미국', },
+                { name: 'Oracle', value: 37700, rank: 18, country: '미국', },
+                { name: 'IBM', value: 37300, rank: 19, country: '미국', },
+                { name: 'Facebook', value: 34900, rank: 21, country: '미국' },
+                { name: 'YouTube', value: 30100, rank: 24, country: '미국', },
+                { name: 'J.P. Morgan', value: 27100, rank: 25, country: '미국', },
+                { name: 'American Express', value: 26700, rank: 27, country: '미국', },
+                { name: 'Visa', value: 21100, rank: 32, country: '미국', },
+                { name: 'Pepsi', value: 21000, rank: 33, country: '미국', },
+                { name: 'UPS', value: 20000, rank: 35, country: '미국', },
+                { name: 'Nvidia', value: 20000, rank: 36, country: '미국', },
+                { name: 'Intel', value: 19700, rank: 37, country: '미국', },
+                { name: 'Netflix', value: 19700, rank: 38, country: '미국', },
+                { name: 'MasterCard', value: 18500, rank: 39, country: '미국', },
+                { name: 'PayPal', value: 18300, rank: 40, country: '미국', },
+                { name: 'Airbnb', value: 17300, rank: 44, country: '미국', },
+                { name: 'Salesforce', value: 17100, rank: 46, country: '미국', },
+                { name: 'GE', value: 17100, rank: 47, country: '미국', },
+                { name: 'Starbucks', value: 15300, rank: 52, country: '미국', },
+                { name: 'Pampers', value: 14500, rank: 54, country: '미국', },
+                { name: 'Citi', value: 14500, rank: 55, country: '미국', },
+                { name: 'Ford', value: 14400, rank: 56, country: '미국', },
+                { name: 'Goldman Sachs', value: 14400, rank: 57, country: '미국', },
+                { name: 'eBay', value: 12900, rank: 63, country: '미국', },
+                { name: 'Morgan Stanley', value: 12400, rank: 66, country: '미국',},
+                { name: 'Budweiser', value: 12000, rank: 67, country: '미국', },
+                { name: 'HP', value: 11600, rank: 68, country: '미국', },
+                { name: 'Nintendo', value: 11500, rank: 70, country: '미국', },
+                { name: 'Colgate', value: 10700, rank: 72, country: '미국', },
+                { name: 'Gillette', value: 10100, rank: 75, country: '미국', },
+                { name: 'LinkedIn', value: 9500, rank: 77, country: '미국', },
+                { name: 'Uber', value: 9200, rank: 78, country: '미국', },
+                { name: '3M', value: 8900, rank: 79, country: '미국', },
+                { name: 'Corona', value: 8700, rank: 80, country: '멕시코',  },
+                { name: 'Caterpillar', value: 8700, rank: 81, country: '미국',  },
+                { name: 'FedEx', value: 8300, rank: 84, country: '미국', },
+                { name: 'Kellogg’s', value: 8200, rank: 85, country: '미국', },
+                { name: 'Tiffany & Co.', value: 7300, rank: 89, country: '미국', },
+                { name: 'Hewlett Packard Enterprise', value: 6800, rank: 92, country: '미국', },
+                { name: 'KFC', value: 6700, rank: 95, country: '미국', },
+                { name: 'Jordan', value: 6400, rank: 99, country: '미국', },// 나머지 북아메리카 데이터 추가
+            ]
+        },
+        {
+            name: '아시아',
+            color: '#D2915B', // 아시아 색상
+            data: [
+                { name: 'Samsung', value: 100800, rank: 5, country: '대한민국' },
+                { name: 'Toyota', value: 72800, rank: 6, country: '일본' },
+                { name: 'Honda', value: 26700, rank: 26, country: '일본' },
+                { name: 'Hyundai', value: 23000, rank: 30, country: '대한민국' },
+                { name: 'Sony', value: 20800, rank: 34, country: '일본' },
+                { name: 'Nissan', value: 13900, rank: 59, country: '일본', },
+                { name: 'Kia', value: 8100, rank: 86, country: '대한민국' },
+                { name: 'Xiaomi', value: 8000, rank: 87, country: '중국' },
+                { name: 'Huawei', value: 6800, rank: 93, country: '중국' },
+                { name: 'LG Electronics', value: 6500, rank: 97, country: '대한민국' },
+                { name: 'Panasonic', value: 6400, rank: 98, country: '일본' },
+                // 나머지 아시아 데이터 추가
+            ]
+        },
+        {
+            name: '유럽',
+            color: '#019B82', // 유럽 색상
+            data: [
+                { name: 'Mercedes-Benz', value: 58900, rank: 8, country: '독일' },
+                { name: 'BMW', value: 52000, rank: 10, country: '독일' },
+                { name: 'Louis Vuitton', value: 50900, rank: 11, country: '프랑스' },
+                { name: 'SAP', value: 36800, rank: 20, country: '독일', },
+                { name: 'Hermes', value: 34700, rank: 22, country: '프랑스' },
+                { name: 'Chanel', value: 33200, rank: 23, country: '프랑스' },
+                { name: 'IKEA', value: 24300, rank: 28, country: '스웨덴', },
+                { name: 'Allianz', value: 23500, rank: 29, country: '독일', },
+                { name: 'Accenture', value: 21900, rank: 31, country: '아일랜드', },
+                { name: 'Gucci', value: 17900, rank: 41, country: '이탈리아',  },
+                { name: 'Zara', value: 17800, rank: 42, country: '스페인' },
+                { name: 'Porsche', value: 17400, rank: 43, country: '독일' },
+                { name: 'Audi', value: 17300, rank: 45, country: '독일', },
+                { name: 'AXA', value: 16800, rank: 48, country: '프랑스', },
+                { name: 'Volkswagen', value: 16500, rank: 49, country: '독일' },
+                { name: 'Siemens', value: 15800, rank: 50, country: '독일' },
+                { name: 'adidas', value: 15500, rank: 51, country: '독일' },
+                { name: 'L’Oreal Paris', value: 14800, rank: 53, country: '프랑스', },
+                { name: 'LEGO', value: 14000, rank: 58, country: '덴마크', },
+                { name: 'H&M', value: 13600, rank: 60, country: '스웨덴', },
+                { name: 'Nescafe', value: 13500, rank: 61, country: '스위스', },
+                { name: 'Ferrari', value: 13100, rank: 62, country: '이탈리아', },
+                { name: 'HSBC', value: 12500, rank: 64, country: '영국', },
+                { name: 'Spotify', value: 12400, rank: 65, country: '스웨덴', },
+                { name: 'Philips', value: 11500, rank: 69, country: '네덜란드', },
+                { name: 'Nestle', value: 11300, rank: 71, country: '스위스',  },
+                { name: 'Cartier', value: 10600, rank: 73, country: '프랑스', },
+                { name: 'Dior', value: 10400, rank: 74, country: '프랑스', },
+                { name: 'Santander', value: 10000, rank: 76, country: '스페인', },
+                { name: 'Danone', value: 8400, rank: 82, country: '프랑스', },
+                { name: 'Prada', value: 8300, rank: 83, country: '이탈리아', },
+                { name: 'DHL', value: 7300, rank: 88, country: '독일', },
+                { name: 'Sephora', value: 7200, rank: 90, country: '프랑스', },
+                { name: 'Pandora', value: 7100, rank: 91, country: '덴마크', },
+                { name: 'Nespresso', value: 6700, rank: 94, country: '스위스', },
+                { name: 'Range Rover', value: 6600, rank: 96, country: '영국', },
+                { name: 'Heineken', value: 6300, rank: 100, country: '네덜란드', }
+                // 나머지 유럽 데이터 추가
+            ]
+        },
+        {
+            name: '남아메리카',
+            color: '#C8C8C8', // 남미 색상
+            data: [
+                { name: 'Corona', value: 8700, rank: 80, country: '멕시코' }
+                // 남미 데이터 추가 가능
+            ]
+        },
+    ]
+});
+  </script>
+</body>
+</html>
