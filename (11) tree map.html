@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>2024년 게임 산업 매출액 (N-SIC 기준)</title>
+  <script src="https://code.highcharts.com/highcharts.js"></script>
+  <script src="https://code.highcharts.com/modules/treemap.js"></script>
+  <script src="https://code.highcharts.com/modules/exporting.js"></script>
+  <style>
+    #container {
+      min-width: 310px;
+      max-width: 1200px;
+      height: 800px;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="container"></div>
+
+<script>
+Highcharts.chart('container', {
+  chart: {
+    type: 'treemap'
+  },
+  title: {
+    text: '2024년 게임산업 매출액 (N-SIC 기준)',
+    style: {
+      fontSize: '20px',
+      fontWeight: 'bold',
+      fontFamily: 'Montserrat, sans-serif',
+      color: '#333'
+    }
+  },
+  credits: { enabled: false },
+  lang: {
+    drillUpText: '← Back to 전체 보기'
+  },
+  tooltip: {
+    useHTML: true,
+    formatter: function () {
+      return `<div style="font-family: 'Montserrat', sans-serif; text-align: center;">
+        <strong>${this.point.name}</strong><br/>
+        매출: ${Highcharts.numberFormat(this.point.value, 0, '.', ',')} 억원
+      </div>`;
+    }
+  },
+  series: [{
+    type: 'treemap',
+    name: '게임 산업 매출액',
+    allowTraversingTree: true,
+    layoutAlgorithm: 'squarified',
+    alternateStartingDirection: true,
+    colorByPoint: false,
+    color: '#D2915B',
+    colorVariation: {
+      key: 'brightness',
+      to: 0.3
+    },
+    levels: [{
+      level: 1,
+      layoutAlgorithm: 'sliceAndDice',
+      dataLabels: {
+        enabled: true,
+        align: 'left',
+        verticalAlign: 'top',
+        x: 5,
+        y: 5,
+        style: {
+          fontSize: '16px',
+          fontWeight: 'bold',
+          fontFamily: 'Montserrat, sans-serif',
+          color: '#333',
+          textOutline: 'none'
+        }
+      },
+      borderWidth: 3
+    }, {
+      level: 2,
+      layoutAlgorithm: 'squarified',
+      dataLabels: {
+        enabled: true,
+        align: 'center',
+        verticalAlign: 'middle',
+        style: {
+          fontSize: '12px',
+          fontWeight: 'normal',
+          fontFamily: 'Montserrat, sans-serif',
+          color: '#555',
+          textOutline: 'none'
+        }
+      }
+    }],
+    data: [
+      // 게임분야 
+      { id: 'gamefield', name: '게임분야', color: '#FF968A' },
+      { name: '온라인 게임', parent: 'gamefield', value: 21200 },
+      { name: '콘솔 게임', parent: 'gamefield', value: 17400 },
+      { name: '게임퍼블리셔', parent: 'gamefield', value: 15800 },
+      { name: '오프라인 게임', parent: 'gamefield', value: 14200 },
+      { name: '콘솔 게임 공급', parent: 'gamefield', value: 13800 },
+      { name: '콘솔 게임 서비스', parent: 'gamefield', value: 13100 },
+      { name: '클라우드 게임 추천', parent: 'gamefield', value: 12600 },
+      { name: '온라인 게임 공급', parent: 'gamefield', value: 11700 },
+      { name: '게임퍼블리셔 용역', parent: 'gamefield', value: 10500 },
+      { name: '클라우드 게임 구독', parent: 'gamefield', value: 10000 },
+      { name: '온라인 게임 용역', parent: 'gamefield', value: 8600 },
+      { name: '클라우드 게임 서비스', parent: 'gamefield', value: 9500 },
+
+      // 게임콘텐츠 
+      { id: 'gamecontent', name: '게임콘텐츠', color: '#FFBDA2' },
+      { name: '슈팅게임', parent: 'gamecontent', value: 8100 },
+      { name: 'IP게임', parent: 'gamecontent', value: 7500 },
+      { name: 'RPG게임', parent: 'gamecontent', value: 7000 },
+      { name: '고포류게임', parent: 'gamecontent', value: 6500 },
+      { name: '팡류 게임', parent: 'gamecontent', value: 6200 },
+      { name: '소셜카지노게임', parent: 'gamecontent', value: 5700 },
+      { name: '액션게임', parent: 'gamecontent', value: 5500 },
+      { name: '광고게임', parent: 'gamecontent', value: 4900 },
+      { name: '시뮬레이션게임', parent: 'gamecontent', value: 4100 },
+      { name: '댄스게임', parent: 'gamecontent', value: 2800 },
+      { name: '캐릭터게임', parent: 'gamecontent', value: 3300 },
+      { name: '캐주얼게임', parent: 'gamecontent', value: 3300 },
+
+      // 게임테크 
+      { id: 'gametech', name: '게임테크', color: '#FFA78A' },
+      { name: '모바일게임분석', parent: 'gametech', value: 8500 },
+      { name: '게임 엔진 제작', parent: 'gametech', value: 8300 },
+      { name: '모바일게임분석 제조', parent: 'gametech', value: 7800 },
+      { name: '게임 엔진 디자인', parent: 'gametech', value: 7400 },
+      { name: '모바일게임분석 개발및공급업', parent: 'gametech', value: 7200 },
+      { name: '글로벌 게임그래픽', parent: 'gametech', value: 6500 },
+      { name: '게임평가시스템 개발', parent: 'gametech', value: 6000 },
+      { name: '게임평가시스템 공급', parent: 'gametech', value: 5800 },
+      { name: '게임 엔진 용역', parent: 'gametech', value: 5500 },
+      { name: '게임 엔진 추천', parent: 'gametech', value: 4500 },
+      { name: '게임평가시스템 구독', parent: 'gametech', value: 3700 },
+      { name: '게임그래픽 제조', parent: 'gametech', value: 4300 },
+
+      // 게임지원 
+      { id: 'gamesupport', name: '게임지원', color: '#FFCFA2' },
+      { name: '게임퍼블리싱', parent: 'gamesupport', value: 1700 },
+      { name: '게임시네마틱', parent: 'gamesupport', value: 1600 },
+      { name: '게임퍼블리싱 제작', parent: 'gamesupport', value: 1400 },
+      { name: '게임퍼블리싱 용역', parent: 'gamesupport', value: 1300 },
+      { name: '게임퍼블리싱 공급', parent: 'gamesupport', value: 1100 },
+      { name: '게임센터 개발및공급업', parent: 'gamesupport', value: 1100 },
+      { name: '게임채널링 디자인', parent: 'gamesupport', value: 1000 },
+      { name: '게임시네마틱 개발', parent: 'gamesupport', value: 900 },
+      { name: '컴퓨터 게임퍼블리싱', parent: 'gamesupport', value: 800 },
+      { name: '게임시네마틱 프로그램', parent: 'gamesupport', value: 700 },
+      { name: '게임테스트 개발', parent: 'gamesupport', value: 400 },
+      { name: '게임채널링 용역', parent: 'gamesupport', value: 300 },
+
+      // 게임하드웨어 
+      { id: 'gamehardware', name: '게임하드웨어', color: '#FFDEA2' },
+      { name: '게임주변기기', parent: 'gamehardware', value: 460 },
+      { name: '게임전용기구', parent: 'gamehardware', value: 430 },
+      { name: '게임주변기기 플랫폼개발', parent: 'gamehardware', value: 410 },
+      { name: '게임전용기구 제작', parent: 'gamehardware', value: 400 },
+      { name: '글로벌 게임주변기기', parent: 'gamehardware', value: 380 },
+      { name: '게임전용기구 렌탈', parent: 'gamehardware', value: 360 },
+      { name: '컴퓨터게임용 게임주변기기', parent: 'gamehardware', value: 340 },
+      { name: '게임주변기기 구독', parent: 'gamehardware', value: 320 },
+      { name: '게임주변기기 추천', parent: 'gamehardware', value: 290 },
+      { name: '게임주변기기 제품', parent: 'gamehardware', value: 260 },
+      { name: '게임전용기구 수리업', parent: 'gamehardware', value: 250 },
+      { name: '게임주변기기 플랫폼', parent: 'gamehardware', value: 240 }
+    ]
+  }]
+});
+</script>
+</body>
+</html>
