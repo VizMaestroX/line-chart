@@ -1,0 +1,234 @@
+// https://react-select.com/home에서 Experimental(popup) 형식의 드롭다운 사용하기 (검색이 되는데 없어도 그만인지는 생각 필요) //
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>2024년 N-SIC 산업별 기업수 분포</title>
+  <script src="https://code.highcharts.com/maps/highmaps.js"></script>
+  <script src="https://code.highcharts.com/maps/modules/exporting.js"></script>
+  <script src="https://code.highcharts.com/maps/modules/export-data.js"></script>
+  <script src="https://code.highcharts.com/maps/modules/accessibility.js"></script>
+  <script src="https://code.highcharts.com/mapdata/countries/kr/kr-all.js"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Montserrat', sans-serif;
+      background: #f8f9fa; /* 부드러운 회색 배경 */
+    }
+
+    #container-wrapper {
+      max-width: 800px;
+      margin: 2em auto;
+      background: #ffffff;
+      padding: 20px 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+#header-area {
+  display: flex;
+  flex-direction: column; /* ✅ 세로로 쌓이게 */
+  align-items: flex-start; /* ✅ 왼쪽 정렬 */
+  gap: 10px; /* ✅ 타이틀과 드롭다운 간격 */
+  margin-bottom: 20px;
+}
+
+    #title {
+      font-size: 20px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    #dropdown-wrapper {
+      display: flex;
+      align-items: center;
+    }
+
+    #industryDropdown {
+      font-size: 14px;
+      padding: 8px 16px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      background-color: #fff;
+      color: #333;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      transition: all 0.3s ease;
+    }
+
+    #industryDropdown:hover {
+      border-color: #888;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    #container {
+      height: 720px;
+      width: 100%;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div id="container-wrapper">
+  <div id="header-area">
+    <div id="title">2024년 N-SIC 산업별 기업수 분포</div>
+    <div id="dropdown-wrapper">
+      <select id="industryDropdown" onchange="onDropdownChange()">
+        <option value="all">전체</option>
+        <option value="게임">게임</option>
+        <option value="마케팅">마케팅</option>
+        <option value="금융">금융</option>
+        <option value="라이프스타일">라이프스타일</option>
+        <option value="생명과학">생명과학</option>
+        <option value="IT/ICT">IT/ICT</option>
+        <option value="전문지식서비스">전문지식서비스</option>
+        <option value="가상현실">가상현실</option>
+        <option value="일반지식서비스">일반지식서비스</option>
+        <option value="미디어">미디어</option>
+        <option value="보안">보안</option>
+        <option value="교육">교육</option>
+        <option value="뷰티">뷰티</option>
+        <option value="헬스케어">헬스케어</option>
+        <option value="부동산">부동산</option>
+        <option value="의료기기">의료기기</option>
+        <option value="유통">유통</option>
+        <option value="패션">패션</option>
+        <option value="통신">통신</option>
+        <option value="스마트폰">스마트폰</option>
+        <option value="일반제품">일반제품</option>
+        <option value="공공산업">공공산업</option>
+        <option value="첨단산업">첨단산업</option>
+        <option value="농업/임업/어업">농업/임업/어업</option>
+        <option value="반려동물">반려동물</option>
+        <option value="로봇">로봇</option>
+        <option value="천연자원">천연자원</option>
+        <option value="일반산업">일반산업</option>
+        <option value="전지전자">전기전자</option>
+        <option value="시스템반도체">시스템반도체</option>
+        <option value="스마트산업">스마트산업</option>
+        <option value="환경">환경</option>
+        <option value="화학">화학</option>
+        <option value="전문제조">전문제조</option>
+        <option value="반도체">반도체</option>
+        <option value="건설">건설</option>
+        <option value="일반제조">일반제조</option>
+        <option value="교통 및 운수">교통 및 운수</option>
+        <option value="디스플레이">디스플레이</option>
+        <option value="모빌리티">모빌리티</option>
+        <option value="에너지">에너지</option>
+      </select>
+    </div>
+  </div>
+
+  <div id="container"></div>
+</div>
+
+<script>
+// 샘플 데이터
+const bubbleData = [
+  { name: "서울", lat: 37.5665, lon: 126.9780, z: 61.5, industry: "게임", color: "#f08060" },
+  { name: "경기", lat: 37.4138, lon: 127.5183, z: 29.2, industry: "게임", color: "#f49a80" },
+  { name: "경남", lat: 35.4606, lon: 128.2132, z: 1.5, industry: "게임", color: "#f7b39f" },
+  { name: "제주", lat: 33.4996, lon: 126.5312, z: 1.5, industry: "게임", color: "#f9c7b8" },
+  { name: "인천", lat: 37.4563, lon: 126.7052, z: 1.5, industry: "게임", color: "#fbdcd1" },
+  { name: "서울", lat: 37.5665, lon: 126.9780, z: 69.7, industry: "마케팅", color: "#5fa8d3" },
+  { name: "경기", lat: 37.4138, lon: 127.5183, z: 18.0, industry: "마케팅", color: "#7db9dc" },
+  { name: "인천", lat: 37.4563, lon: 126.7052, z: 2.2, industry: "마케팅", color: "#9ac9e4" },
+  { name: "충북", lat: 36.6358, lon: 127.4914, z: 2.2, industry: "마케팅", color: "#b7daed" },
+  { name: "충남", lat: 36.5184, lon: 126.8000, z: 2.2, industry: "마케팅", color: "#d4ebf6" },
+  { name: "서울", lat: 37.5665, lon: 126.9780, z: 65.8, industry: "금융", color: "#66c2a5" },
+  { name: "경기", lat: 37.4138, lon: 127.5183, z: 19.2, industry: "금융", color: "#83d1b6" },
+  { name: "대구", lat: 35.8714, lon: 128.6014, z: 1.9, industry: "금융", color: "#a0e1c7" },
+  { name: "인천", lat: 37.4563, lon: 126.7052, z: 1.9, industry: "금융", color: "#bcefd8" },
+  { name: "충북", lat: 36.6358, lon: 127.4914, z: 1.7, industry: "금융", color: "#d8fff0" },
+  // 추가 데이터 넣으면 됨
+];
+
+let chart = Highcharts.mapChart('container', {
+  chart: {
+    map: 'countries/kr/kr-all',
+    marginTop: 0,
+    spacingBottom: 50,
+    height: 720,
+    animation: {
+      duration: 1200,
+      easing: 'easeOutBounce'
+    }
+  },
+  title: { text: null },
+  credits: { enabled: false },
+  mapNavigation: {
+    enabled: true,
+    enableMouseWheelZoom: false,
+    buttonOptions: { verticalAlign: 'bottom' }
+  },
+  tooltip: {
+    useHTML: true,
+    backgroundColor: '#ffffff',
+    borderColor: '#cccccc',
+    borderRadius: 8,
+    borderWidth: 1,
+    shadow: true,
+    style: {
+      color: '#333',
+      fontFamily: 'Montserrat, sans-serif',
+      fontSize: '12px'
+    },
+    headerFormat: '',
+    pointFormat: `
+      <div style="text-align:left; line-height:1.8;">
+        📍 지역: <strong>{point.name}</strong><br/>
+        🏭 산업: <strong>{point.industry}</strong><br/>
+        📊 비중: <strong>{point.z}%</strong>
+      </div>`
+  },
+  legend: { enabled: false },
+  series: [
+    {
+      name: '대한민국 지도',
+      mapData: Highcharts.maps['countries/kr/kr-all'],
+      borderColor: '#A0A0A0',
+      nullColor: '#f5f5f5',
+      showInLegend: false
+    },
+    {
+      type: 'mapbubble',
+      name: '기업수 분포',
+      data: bubbleData,
+      minSize: '9%',
+      maxSize: '15%',
+      joinBy: null,
+      dataLabels: {
+        enabled: true,
+        format: '{point.name}',
+        style: {
+          fontSize: '11px',
+          color: '#333',
+          textOutline: 'none'
+        }
+      }
+    }
+  ]
+});
+
+// 드롭다운 필터링
+function onDropdownChange() {
+  const selected = document.getElementById('industryDropdown').value;
+  const series = chart.series[1];
+
+  if (selected === 'all') {
+    series.setData(bubbleData, true);
+  } else {
+    const filtered = bubbleData.filter(d => d.industry === selected);
+    series.setData(filtered, true);
+  }
+}
+</script>
+
+</body>
+</html>
+
