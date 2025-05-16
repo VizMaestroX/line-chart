@@ -200,7 +200,7 @@ const series = [
 
 
 
-// Dual Axis Combination Chart는  Dual Axis Chart 와 동일
+// Dual Axis Combination Chart (Dual Axis Chart 데이터와 동일)
 
 // Column Chart 
 // (1) 월 단위 데이터 
@@ -306,4 +306,10 @@ const series = [
     data: [10720.78, 10569.13, 8704.03, 8177.28, 12155.50]
   }
 ];
+
+
+// Column Stacked Percentage Chart (Column Chart 데이터와 동일)
+
+// Column Stacked Chart (Column Chart 데이터와 동일)
+
 
