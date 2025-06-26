@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Apple 스타일 서비스 슬라이드</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    html, body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      height: 100%;
+      overflow-x: hidden;
+      background: #f2f2f5;
+    }
+    .wrapper {
+      height: 100vh;
+      overflow: hidden;
+      position: relative;
+    }
+    .slider {
+      display: flex;
+      width: 200vw;
+      height: 100vh;
+      transition: transform 1s ease;
+    }
+    .section {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      padding: 0 5vw;
+    }
+    .content-box {
+      background: #000;
+      border-radius: 30px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      color: #fff;
+      width: 100%;
+      max-width: 1200px;
+      height: 70%;
+      padding: 4rem;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+      overflow: hidden;
+    }
+    .text-block {
+      flex: 1;
+      padding-right: 2rem;
+    }
+    .text-block h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+    .text-block p {
+      font-size: 1.1rem;
+      line-height: 1.6;
+      margin-bottom: 2rem;
+    }
+    .text-block a {
+      background: #007aff;
+      color: white;
+      padding: 0.6rem 1.4rem;
+      border-radius: 999px;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 0.95rem;
+    }
+    .image-block {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      max-height: 100%;
+    }
+    .image-block img {
+      max-width: 100%;
+      max-height: 100%;
+      border-radius: 20px;
+      object-fit: contain;
+    }
+    .indicator {
+      position: absolute;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 10px;
+    }
+    .dot {
+      width: 10px;
+      height: 10px;
+      background: #ccc;
+      border-radius: 50%;
+    }
+    .dot.active {
+      background: #007aff;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="slider" id="slider">
+      <section class="section">
+        <div class="content-box">
+          <div class="text-block">
+            <h1>NSIC 산업 지표</h1>
+            <p>산업을 하나의 체계로 보다. <br/> 산업 간, 산업 내, Peer 그룹 간의 관계를 정량적으로 해석합니다.<br/>정돈된 시계열 지표로 산업 구조를 다시 그려보세요.</p>
+            <a href="#">자세히 보기</a>
+          </div>
+          <div class="image-block">
+            <img src="https://i.imgur.com/ImZqfE6.jpg" alt="빨간 전구 이미지" />
+          </div>
+        </div>
+      </section>
+      <section class="section">
+        <div class="content-box">
+          <div class="text-block">
+            <h1>주제별 경제 분석</h1>
+            <p>경제를 더 입체적으로. <br/> 국내부터 세계까지, 주제별로 선별된 핵심 지표를 한눈에.<br/>거시에서 미시까지, 지금 필요한 데이터만을 정확히 전달합니다.</p>
+            <a href="#">자세히 보기</a>
+          </div>
+          <div class="image-block">
+            <img src="https://i.imgur.com/XXj2eIE.jpg" alt="도시 고층 빌딩 이미지" />
+          </div>
+        </div>
+      </section>
+    </div>
+    <div class="indicator">
+      <div class="dot" id="dot1"></div>
+      <div class="dot" id="dot2"></div>
+    </div>
+  </div>
+
+  <script>
+    const slider = document.getElementById('slider');
+    const dots = [document.getElementById('dot1'), document.getElementById('dot2')];
+    let index = 0;
+
+    function updateSlider() {
+      slider.style.transform = `translateX(-${index * 100}vw)`;
+      dots.forEach((dot, i) => dot.classList.toggle('active', i === index));
+    }
+
+    setInterval(() => {
+      index = (index + 1) % 2;
+      updateSlider();
+    }, 5000);
+
+    window.addEventListener('load', updateSlider);
+  </script>
+</body>
+</html>
+
+
+
+let currentIndex = 0; // 여기서부터 JS
+
+function scrollToSection(index) {
+  const targetY = index * window.innerHeight;
+  wrapper.scrollTo({ top: targetY, behavior: 'smooth' });
+  currentIndex = index;
+}
+
+setInterval(() => {
+  const nextIndex = (currentIndex + 1) % 2;
+  scrollToSection(nextIndex);
+}, 3000); // 5초마다 전환
