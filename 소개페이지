@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NSIC 산업 지표 안내</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background: #f5f5f7;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      color: #1d1d1f;
+      line-height: 1.7;
+    }
+ hr {
+  border-top: 1px solid #d2d2d7;
+  margin: 3rem auto;
+/* equivalent to max-w-5xl */
+}
+
+    .card:hover { transform: scale(1.02); }
+  </style>
+</head>
+<body>
+<!-- Top Intro Section with Anchor Navigation -->
+<section class="max-w-7xl mx-auto px-6 pt-8 pb-0 md:flex md:gap-12">
+  <!-- Left: Title and Summary -->
+  <div class="flex-1">
+    <h1 class="text-2xl md:text-3xl font-semibold mb-6 tracking-tight">NSIC 산업 지표 안내</h1>
+    <p class="text-gray-700 text-sm">
+      NSIC 산업지표는 우리나라 산업 전반의 흐름과 변화를 체계적으로 파악할 수 있도록 구성된 종합적인 데이터 지표 체계입니다.
+    </p>
+  </div>
+  <!-- Right: Anchor Navigation -->
+  <aside class="md:w-64 shrink-0 md:mt-[-1.5rem] sticky top-20 h-fit rounded-2xl p-6">
+    <h3 class="text-lg font-semibold mb-4 text-[#000000]">알아보고 싶은 항목 선택:</h3>
+    <ul class="space-y-2 text-[#007aff] text-sm font-medium">
+      <li><a href="#intro" class="underline decoration-current">NSIC 지표의 의의</a></li>
+      <li><a href="#selection" class="underline decoration-current">지표선정</a></li>
+      <li><a href="#classification" class="underline decoration-current">분류체계</a></li>
+      <li><a href="#service" class="underline decoration-current">서비스 구성</a></li>
+      <li><a href="#schema" class="underline decoration-current">체계도</a></li>
+    </ul>
+  </aside>
+</section>
+<hr>
+
+<!-- Main Content -->
+<main class="max-w-7xl mx-auto px-6">
+  <!-- Section 1 -->
+  <section id="intro" class="md:grid md:grid-cols-3 md:items-start gap-8">
+    <h2 class="text-lg font-semibold mb-4 md:mb-0">NSIC 산업 지표 구축의 의의</h2>
+    <div class="md:col-span-2 text-sm text-gray-800">
+      <p>NSIC 산업지표는 국가경제의 주요 분야에 대한 판단근거로 폭넓게, 분야별 핵심지표를 엮어낸 구조적 자료집입니다. 국가적 성장 전망과 방향을 설정하기 위해, 단치표보다는 경제, 사회, 환경 등 다양한 지표로 구성된 집합체를 통해 깊고 넓게 판단하려는 세계적 흐름에 부응하여 제작되었습니다.</p>
+    </div>
+  </section>
+  <hr>
+
+  <!-- Section 3 -->
+  <section id="classification" class="md:grid md:grid-cols-3 md:items-start gap-8">
+    <h2 class="text-lg font-semibold mb-4 md:mb-0">분류체계</h2>
+    <div class="md:col-span-2 text-sm text-gray-800">
+      <ul class="list-disc pl-4 space-y-1">
+        <li>투입(input) 아닌 산출(output) 중심의 지표</li>
+        <li>국가계정과 객체별, 시간가중치를 포함하는 지표</li>
+        <li>경제성장(progress) 단계별 지표</li>
+        <li>정책적 노력과 변환 가능한 지표</li>
+      </ul>
+    </div>
+  </section>
+  <hr>
+
+  <!-- Section 4 -->
+  <section id="service" class="md:grid md:grid-cols-3 md:items-start gap-8">
+    <h2 class="text-lg font-semibold mb-4 md:mb-0">지표 서비스 구성</h2>
+    <div class="md:col-span-2 text-sm text-gray-800">
+      <p>누구나 쉽게 이해할 수 있도록 그래프 뷰로 제공되며, 차트 정의, 해석, 통계표, 용어해설, 관계그래프를 함께 제공하여 이용자가 지표에 대하여 깊이 있게 접근할 수 있도록 지원합니다. 또한 모든 지표들은 관련 정책 공표시기 맞추어 신속히 업데이트되어 최신 정보를 지속적으로 이용하실 수 있습니다.</p>
+    </div>
+  </section>
+  <hr>
+
+  <!-- Section 5: 체계도 -->
+  <section id="schema" class="md:grid md:grid-cols-3 md:items-start gap-8">
+    <h2 class="text-lg font-semibold mb-4 md:mb-0">체계도</h2>
+    <div class="md:col-span-2 text-gray-800">
+      <p class="mb-6 text-sm text-gray-700 leading-relaxed">
+        NSIC 산업군은 총 41개 대분류 산업으로 구성되며, 각 대분류는 수 개에서 수십 개의 중분류 산업 지표로 구성됩니다. 카드(항목)를 선택하면 해당 산업의 중분류 목록이 <span class="font-semibold">오른쪽</span> 패널에 표시됩니다.
+      </p>
+      <!-- 카드 UI -->
+      <div class="relative flex flex-col lg:flex-row gap-10">
+        <!-- 카드 그리드 -->
+        <div id="categoryGrid" class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-6 flex-1"></div>
+
+        <!-- 상세 보기 패널 -->
+        <div id="detailPanel" class="hidden absolute top-0 right-0 bg-white border border-gray-300 rounded-2xl shadow-lg p-5 w-80">
+          <div class="flex justify-between items-center mb-3">
+            <h3 id="panelTitle" class="text-lg font-semibold"></h3>
+            <button onclick="hideDetail()" class="text-[#007aff] text-sm whitespace-nowrap">← 돌아가기</button>
+          </div>
+          <ul id="subList" class="list-disc list-inside text-gray-700 text-sm space-y-1"></ul>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+  const iconMap = { "게임": "🎮", "마케팅": "📣", "금융": "💰", "라이프스타일": "🏞️", "생명과학": "🧬", "IT/ICT": "💻", "전문지식서비스": "📚", "가상현실": "🕶️", "일반지식서비스": "📦", "미디어": "📺", "보안": "🔒", "교육": "🎓", "뷰티": "💄", "헬스케어": "🩺", "부동산": "🏘️", "의료기기": "🧪", "유통": "🚚", "패션": "👗", "통신": "📡", "스마트폰": "📱", "일반제품": "🛍️", "공공산업": "🏛️", "첨단산업": "🚀", "농업/임업/어업": "🌾", "반려동물": "🐶", "로봇": "🤖", "천연자원": "⛏️", "일반산업": "🏭", "전기전자": "🔌", "시스템반도체": "🧠", "스마트산업": "📡", "환경": "🌿", "화학": "⚗️", "전문제조": "🔧", "반도체": "💾", "건설": "🏗️", "일반제조": "🏭", "교통 및 운수": "🚌", "디스플레이": "🖥️", "모빌리티": "🚗", "에너지": "⚡" };
+
+const industryData = [
+  { category: "게임", subs: ["게임분야", "게임콘텐츠", "게임테크", "게임지원", "게임하드웨어"] },
+  { category: "마케팅", subs: ["광고", "마케팅 유형", "광고물", "애드테크", "홍보", "프로모션"] },
+  { category: "금융", subs: ["자산", "투자", "금융업무", "금융기관", "렌탈", "카드", "핀테크", "증권", "금융유형", "회계", "보험", "연금"] },
+  { category: "라이프스타일", subs: ["스포츠", "트렌드", "여행", "여가산업", "유아산업", "남성전용산업", "문화산업", "여성전용산업", "기부", "성인산업", "장례"] },
+  { category: "생명과학", subs: ["생명공학", "생물학", "의학", "약학"] },
+  { category: "IT/ICT", subs: ["IT지원", "IT기술", "IT인프라", "IT솔루션", "빅데이터", "IT플랫폼", "데이터사이언스", "클라우드", "앱", "인공지능", "시스템관리", "IT툴", "데이터구조", "IT개발 환경", "자동화시스템", "블록체인", "원격지원", "웹", "응용프로그램", "IT테스트", "데이터소스", "IT엔진", "클라이언트"] },
+  { category: "전문지식서비스", subs: ["비지니스", "콘텐츠", "전문과학 기술", "연구개발", "기업지원", "법률서비스", "용역", "평가지표", "디자인", "인증", "비영리단체", "모니터링", "안전", "통역 및 번역"] },
+  { category: "가상현실", subs: ["가상기기", "가상기술", "디지털공간", "실감형콘텐츠"] },
+  { category: "일반지식서비스", subs: ["거래", "관리", "HR", "부가지원서비스", "대행", "프랜차이즈", "안내", "정비", "공유"] },
+  { category: "미디어", subs: ["미디어하드웨어", "방송", "뉴미디어", "영상", "오디오", "인쇄", "출판", "미디어사 분류", "팬덤", "미디어테크", "사진", "미디어소프트웨어"] },
+  { category: "보안", subs: ["산업보안", "정보보안", "보안시스템", "사이버보안", "물리적보안", "시스템보안", "신원 및 액세스", "영상감시장비", "보안기술"] },
+  { category: "교육", subs: ["교육콘텐츠", "교재", "튜터링", "에듀테크", "교육지원", "교육시설", "학원", "교구", "초중고교육", "어학"] },
+  { category: "뷰티", subs: ["뷰티케어", "화장품", "뷰티용품", "메이크업", "뷰티테크", "뷰티가전", "마스크팩"] },
+  { category: "헬스케어", subs: ["의약품", "건강기능식품", "질병질환", "클리닉", "디지털헬스케어", "의료소재", "의료분석", "치료", "의료관리", "의료검사", "의료정보", "의료기술", "대체의료", "의료환경서비스", "의료실험"] },
+  { category: "부동산", subs: ["건물", "토지", "부동산커뮤니티", "프롭테크"] },
+  { category: "의료기기", subs: ["의료용품", "체외진단", "보조의료기기", "검사측정 의료기기", "미용의료기기", "치료의료기기", "치과의료기기", "소모성 의료기기", "디지털의료기기", "의료기기부속품", "전자의료기기", "교정의료기기", "의료기기관리", "수술의료기기", "진료의료기기", "운반의료기기", "재활의료기기", "차세대의료기기"] },
+  { category: "유통", subs: ["운송", "도소매", "물류", "이커머스", "무역", "스마트유통", "포장", "이커머스테크", "창고"] },
+  { category: "패션", subs: ["의류", "섬유", "패션잡화", "신발", "가죽", "가방", "패션부자재", "패션화학약품", "패션장비", "고성능섬유", "패션디자인"] },
+  { category: "통신", subs: ["통신장비", "통신인프라", "유선통신", "통신망", "통신부품", "5세대이동통신", "통신기술", "통신자재", "통신시스템", "무선통신", "통신단말기", "통신프로토콜"] },
+  { category: "스마트폰", subs: ["모바일지원", "모바일부품", "모바일소프트웨어", "모바일주변기기", "소프트웨어 마켓", "모바일악세사리", "모바일테크"] },
+  { category: "일반제품", subs: ["가구", "산업용품", "생활용품", "주방용품", "건강생활용품", "위생제품", "생활용기", "완구제품", "잡화용품", "브랜드제품", "취미용품", "사무용품", "향료/향", "업소제품", "생활보조용품", "흡연용품", "청소용품", "욕실제품", "세제류", "특수제품", "친환경제품", "커피용품", "오락제품", "계절용품", "문구용품", "축광용품", "미술용품", "기업소모성제품", "세탁용품", "잉크용품", "살균기"] },
+  { category: "공공산업", subs: ["방위산업", "지속성장 및 균형발전", "공공행정", "공공지원", "공공기관", "복지산업", "공공보건", "공공조달", "공공방재"] },
+  { category: "첨단산업", subs: ["친환경소재", "첨단소재", "IOT", "무인화산업", "첨단 시스템", "첨단복합소재", "첨단시설", "3D 프린팅", "첨단기술", "첨단제조장비", "첨단시험장비", "3D프린팅기술"] },
+  { category: "농업/임업/어업", subs: ["농업", "축산업", "사료", "어업", "농약", "친환경농업", "품종", "비료"] },
+  { category: "반려동물", subs: ["펫의료", "펫F&B", "펫시설", "펫용품"] },
+  { category: "로봇", subs: ["산업로봇", "로봇관련 부품", "제조용로봇", "특수로봇", "서비스로봇", "생활로봇", "로봇 소프트웨어", "로봇공학"] },
+  { category: "천연자원", subs: ["광업", "광물"] },
+  { category: "일반산업", subs: ["전력산업", "컴퓨터산업", "해양산업", "냉난방산업", "제어산업", "중개", "이벤트산업", "공조산업", "소음산업", "숙박산업", "공기정화", "복제산업"] },
+  { category: "전기전자", subs: ["전기전자제품", "가전제품", "가전디지털", "전기장비", "전기전자부품", "전기전자소재", "전기전자자재", "광학장비", "전자장비", "전기전자장비", "차세대전자소재", "전기전자시스템", "전기전자기술"] },
+  { category: "시스템반도체", subs: ["집적회로", "반도체기술", "반도체밸류체인", "마이크로컴포넌트", "코덱류 반도체", "주문형반도체", "지능형반도체", "반도체IP"] },
+  { category: "스마트산업", subs: ["스마트 팩토리", "스마트 웨어러블", "스마트 홈", "스마트 테크", "스마트 디바이스", "스마트 팜", "스마트시티", "스마트제조"] },
+  { category: "환경", subs: ["수처리", "재활용", "환경시설", "그린소재", "환경장비", "기상기후", "환경기술", "환경시스템", "CCUS", "환경용품", "환경복원", "환경오염", "방역"] },
+  { category: "화학", subs: ["화학소재", "화학약품", "화학공학", "플라스틱", "NCC", "화학제품", "BTX", "수지", "표면처리약품", "고무", "화학기계", "세라믹", "화학장치"] },
+  { category: "전문제조", subs: ["동력장치", "전문부품", "필름", "조명", "계측", "안전기자재", "실험기자재", "센서", "특수챔버", "악기", "탐지기", "필터", "결제기기", "소방", "온도장치", "원격장치", "모험", "분석기"] },
+  { category: "반도체", subs: ["메모리반도체", "반도체소재", "차량용 반도체", "반도체부품", "반도체제조장비", "반도체소자", "차세대반도체", "테스트하우스", "반도체화학약품", "반도체센서"] },
+  { category: "건설", subs: ["건설자재", "건설설비", "공사", "건설장비", "건설지원", "건설장비부품", "인테리어", "건설기술"] },
+   { category: "일반제조", subs: ["1차금속제품", "산업장비", "산업부품", "임가공", "산업소재", "가공제품", "기계장비", "용기", "금형", "펄프 및 제지", "성형가공기계", "공작기계", "공구", "유리", "목재 및 목제품", "산업설비", "펌프", "표면처리기기"] },
+  { category: "교통 및 운수", subs: ["해운", "철도", "여객운송", "항공", "항공우주", "교통 및 운수장치", "주차", "교통 및 운수기술", "교통안전용품", "교통안전시설물", "교통솔루션"] },
+  { category: "디스플레이", subs: ["디스플레이종류", "디스플레이응용제품", "디스플레이 소재", "스마트디스플레이", "디스플레이기판", "디스플레이제조장비", "디스플레이부품", "디스플레이 기술", "디스플레이필름", "디스플레이화학약품"] },
+  { category: "모빌리티", subs: ["자동차", "전기모빌리티", "모빌리티애프터마켓", "자율주행", "모빌리티 미래 생태계", "산업자동차", "소형모빌리티", "특수목적용자동차", "드론", "수소모빌리티", "마이크로 모빌리티"] },
+  { category: "에너지", subs: ["연료", "배터리", "에너지발전", "에너지유형", "태양광에너지", "에너지송배전", "에너지기술", "정유", "원자력에너지", "바이오에너지", "수소에너지", "풍력에너지", "증기에너지", "열에너지", "폐열회수에너지"] }
+];
+  const container = document.getElementById("categoryGrid");
+  industryData.forEach(item => {
+    const div = document.createElement("div");
+    div.className = "card bg-white p-6 rounded-2xl shadow cursor-pointer transition-transform flex flex-col gap-2";
+    div.onclick = () => showDetail(item.category);
+    div.innerHTML = `
+      <div class="flex items-center gap-2">
+        <span class="text-xl">${iconMap[item.category] || '📦'}</span>
+        <h2 class="text-sm font-semibold">${item.category}</h2>
+      </div>
+      <p class="text-gray-500 text-sm">중분류 ${item.subs.length}개</p>
+    `;
+    container.appendChild(div);
+  });
+
+  function showDetail(category) {
+    const panel = document.getElementById("detailPanel");
+    const title = document.getElementById("panelTitle");
+    const list = document.getElementById("subList");
+    const target = industryData.find(d => d.category === category);
+    title.textContent = category;
+    list.innerHTML = "";
+    target.subs.forEach(sub => {
+      const li = document.createElement("li");
+      li.textContent = sub;
+      list.appendChild(li);
+    });
+    panel.classList.remove("hidden");
+  }
+
+  function hideDetail() {
+    document.getElementById("detailPanel").classList.add("hidden");
+  }
+</script>
+</body>
+</html>
