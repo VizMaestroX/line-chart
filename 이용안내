@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>User Guide</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      color: #1d1d1f;
+    }
+    .rotate-180 {
+      transform: rotate(180deg);
+    }
+  </style>
+</head>
+<body>
+  <section class="max-w-screen-xl mx-auto px-6 py-20">
+    <h2 class="text-4xl font-semibold mb-14">User Guide.</h2>
+
+    <div class="bg-[#f5f5f7] rounded-3xl p-10 py-16 min-h-[500px] flex flex-col lg:flex-row items-center lg:items-start justify-start gap-16">
+      <!-- Left Accordion -->
+      <div class="w-full lg:w-[400px]">
+        <ul id="accordion" class="space-y-6">
+          <!-- Main Page -->
+          <li>
+            <button class="flex w-full items-start justify-between text-left group" data-target="main">
+              <div>
+                <h3 class="text-xl font-semibold">Main Page</h3>
+                <p class="mt-2 text-sm text-gray-700 max-w-md" id="desc-main">
+                  With this entry page, you can navigate through all the features and see your dashboard instantly. You’ll find the most recent updates and summaries here.
+                </p>
+              </div>
+              <svg class="ml-4 mt-1 h-4 w-4 transition-transform duration-200" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6" />
+              </svg>
+            </button>
+          </li>
+
+          <li><div class="border-t border-gray-300"></div></li>
+
+          <!-- Indicators -->
+          <li>
+            <button class="flex w-full items-start justify-between text-left group" data-target="indicators">
+              <div>
+                <h3 class="text-xl font-semibold">Indicators</h3>
+                <p class="mt-2 text-sm text-gray-700 max-w-md" id="desc-indicators" hidden>
+                  Explore categorized charts and insights. Filter by industry, macro trends, or custom tags. All visualizations are interactive and optimized for clarity.
+                </p>
+              </div>
+              <svg class="ml-4 mt-1 h-4 w-4 transition-transform duration-200" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6" />
+              </svg>
+            </button>
+          </li>
+
+          <li><div class="border-t border-gray-300"></div></li>
+
+          <!-- My Page -->
+          <li>
+            <button class="flex w-full items-start justify-between text-left group" data-target="mypage">
+              <div>
+                <h3 class="text-xl font-semibold">My Page</h3>
+                <p class="mt-2 text-sm text-gray-700 max-w-md" id="desc-mypage" hidden>
+                  Customize your experience, save favorite indicators, manage settings and preferences. Your data follows you across platforms with full privacy.
+                </p>
+              </div>
+              <svg class="ml-4 mt-1 h-4 w-4 transition-transform duration-200" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6" />
+              </svg>
+            </button>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Right Image -->
+      <div class="flex-1 w-full max-w-2xl">
+        <img id="mainImage" src="https://i.imgur.com/pnur1KB.jpeg" alt="Main Page Image" class="w-full rounded-xl shadow-xl transition-opacity duration-300 object-contain max-h-[500px]" />
+      </div>
+    </div>
+  </section>
+
+  <script>
+    const images = {
+      main: "https://i.imgur.com/pnur1KB.jpeg",
+      indicators: "https://i.imgur.com/vorWjkT.jpeg",
+      mypage: "https://i.imgur.com/4ghZraS.jpeg",
+    };
+
+    const accordion = document.getElementById("accordion");
+    const mainImage = document.getElementById("mainImage");
+
+    accordion.addEventListener("click", (e) => {
+      const btn = e.target.closest("button[data-target]");
+      if (!btn) return;
+
+      // Reset all buttons
+      document.querySelectorAll("#accordion button").forEach((b) => {
+        b.setAttribute("data-active", "false");
+        const icon = b.querySelector("svg");
+        if (icon) icon.classList.remove("rotate-180");
+      });
+
+      // Set active
+      btn.setAttribute("data-active", "true");
+      const icon = btn.querySelector("svg");
+      if (icon) icon.classList.add("rotate-180");
+
+      const target = btn.getAttribute("data-target");
+
+      // Show corresponding description
+      ["main", "indicators", "mypage"].forEach((key) => {
+        document.getElementById(`desc-${key}`).hidden = key !== target;
+      });
+
+      // Switch image
+      mainImage.style.opacity = 0;
+      setTimeout(() => {
+        mainImage.src = images[target];
+        mainImage.alt = `${target} image`;
+        mainImage.style.opacity = 1;
+      }, 200);
+    });
+
+    // Initialize default view
+    document.querySelector("button[data-target='main']").click();
+  </script>
+</body>
+</html>
