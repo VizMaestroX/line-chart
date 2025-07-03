@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Indicator Feedback</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .card-active {
+      border-color: #2563eb;
+    }
+  </style>
+</head>
+
+<body class="bg-white px-6 py-12 text-gray-900 font-sans">
+  <div class="max-w-5xl mx-auto">
+
+    <!-- ⬆️ 메인 제목 -->
+    <h1 class="text-3xl font-bold mb-4">Indicator Feedback</h1>
+
+    <!-- ⬆️ 소개 텍스트 + 이미지 -->
+    <div class="sm:flex items-start gap-8 mb-6">
+      <!-- 텍스트 영역 -->
+      <div class="sm:w-1/2">
+     <p class="text-gray-600 leading-relaxed mb-2">
+  We strive to deliver clear, reliable, and insightful statistical indicators to support your decision-making.
+  Your feedback helps us improve data quality, clarity, and accessibility.
+</p>
+<p class="text-gray-600 leading-relaxed">
+  We read all feedback carefully, but please note that we cannot respond to the comments you submit.
+</p>
+
+      </div>
+
+      <!-- 이미지 영역 -->
+      <div class="sm:w-1/2 mt-6 sm:mt-0 flex justify-center">
+        <img src="https://i.imgur.com/8dFVhGs.png"
+             alt="Feedback Illustration"
+             class="max-w-[240px] w-full h-auto object-contain" />
+      </div>
+    </div>
+
+    <!-- ⬇️ 하위 제목 (Feedback Type) & 구분선 -->
+    <h2 class="text-xl font-semibold mt-0 pt-8 mb-2">Feedback Type</h2>
+    <hr class="mb-8 border border-[#4B5563]" />
+
+    <!-- ⬇️ 카드형 선택 UI -->
+    <div id="feedbackCards" class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-12">
+
+      <!-- 카드 1 : Ask a Question -->
+      <div onclick="selectType('question')" id="card-question"
+           class="cursor-pointer border rounded-xl p-6 text-center transition">
+        <div class="mb-3 flex items-center justify-center">
+          <img src="https://i.imgur.com/Ek9y9Fe.png"
+               alt="Question Icon"
+               class="w-14 h-14 object-contain" />
+        </div>
+        <p class="text-base font-normal text-blue-600">Ask a Question</p>
+      </div>
+
+      <!-- 카드 2 : Report a Bug -->
+      <div onclick="selectType('bug')" id="card-bug"
+           class="cursor-pointer border rounded-xl p-6 text-center  transition">
+        <div class="mb-3 flex items-center justify-center">
+          <img src="https://i.imgur.com/k64lJBW.png"
+               alt="Bug Icon"
+               class="w-14 h-14 object-contain" />
+        </div>
+        <p class="text-base font-normal text-blue-600">Report a Bug</p>
+      </div>
+
+      <!-- 카드 3 : Suggest an Improvement -->
+      <div onclick="selectType('suggestion')" id="card-suggestion"
+           class="cursor-pointer border rounded-xl p-6 text-center  transition">
+        <div class="mb-3 flex items-center justify-center">
+          <img src="https://i.imgur.com/OyCMwQU.png"
+               alt="Lightbulb Icon"
+               class="w-14 h-14 object-contain" />
+        </div>
+        <p class="text-base font-normal text-blue-600">Suggest an Improvement</p>
+      </div>
+    </div>
+
+<!-- ⬇️ 피드백 입력 폼 -->
+<div id="feedbackForm" class="hidden">
+  <h2 class="text-xl font-medium mt-0 pt-12 mb-2" id="formTitle">Submit Feedback</h2>
+  <hr class="mb-6 border border-[#4B5563]" />
+
+  <form class="space-y-6">
+    <div>
+      <label class="block text-sm font-medium mb-1">Indicator Name</label>
+      <input type="text" placeholder="e.g. Employment Rate, CPI"
+             class="w-full border rounded-md px-3 py-2 text-sm focus:ring-blue-200" />
+    </div>
+    <div>
+      <label class="block text-sm font-medium mb-1">Subject</label>
+      <input type="text" placeholder="e.g. Request to check missing data"
+             class="w-full border rounded-md px-3 py-2 text-sm focus:ring-blue-200" />
+    </div>
+    <div>
+      <label class="block text-sm font-medium mb-1">Message</label>
+      <textarea rows="5" placeholder="Please be specific and include any relevant details."
+                class="w-full border rounded-md px-3 py-2 text-sm focus:ring-blue-200"></textarea>
+    </div>
+    
+<!-- 버튼 및 하단 안내 문구 -->
+<div>
+  <button type="submit"
+          class="w-full bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition text-lg font-light">
+    Submit
+  </button>
+  <p class="mt-3 text-xs text-gray-500 text-center leading-relaxed">
+    By clicking “Submit,” you agree to share your information with our authorized partners and resellers
+    to service your request. Your information will be used only for necessary operational and transactional communications.
+  </p>
+</div>
+
+
+  <!-- JS: 카드 선택 & 폼 열기 -->
+  <script>
+    function selectType(type) {
+      ['question', 'bug', 'suggestion'].forEach(id => {
+        document.getElementById('card-' + id).classList.remove('card-active');
+      });
+      document.getElementById('card-' + type).classList.add('card-active');
+
+      document.getElementById('feedbackForm').classList.remove('hidden');
+
+      const title = {
+        question: 'Ask a Question',
+        bug: 'Report a Bug',
+        suggestion: 'Suggest an Improvement',
+      };
+      document.getElementById('formTitle').textContent = `${title[type]} Feedback`;
+    }
+  </script>
+</body>
+</html>
